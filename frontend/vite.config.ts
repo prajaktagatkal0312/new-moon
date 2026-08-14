@@ -25,6 +25,7 @@ export default defineConfig({
   },
   optimizeDeps: {
     exclude: ['@midnight-ntwrk/compact-runtime'],
+    include: ['object-inspect'],
   },
   build: {
     target: 'esnext',
