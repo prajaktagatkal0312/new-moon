@@ -63,3 +63,6 @@ midnight-level-db/
 # Local vow secret storage (private witness data)
 .moonvow-local-secrets.json
 
+# Frontend build artifacts
+frontend/dist/
+frontend/node_modules/

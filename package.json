@@ -17,7 +17,10 @@
     "proof-server:stop": "docker compose down",
     "clean": "rm -rf contracts/managed .midnight-state.json .midnight-wallet-state",
     "test": "node --test test/moon-vow.test.js",
-    "test:e2e": "tsx scripts/e2e-check.ts"
+    "test:e2e": "tsx scripts/e2e-check.ts",
+    "frontend:dev": "npm --prefix frontend run dev",
+    "frontend:build": "npm --prefix frontend run build",
+    "frontend:preview": "npm --prefix frontend run preview"
   },
   "dependencies": {
     "@midnight-ntwrk/compact-runtime": "0.16.0",
