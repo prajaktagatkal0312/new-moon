@@ -31,37 +31,31 @@ export function useWallet() {
   });
 
   const getInjectedLace = useCallback(() => {
-    if (typeof window === 'undefined') return null;
-    const midnight = (window as any).midnight;
-    if (!midnight) return null;
-
-    let fallbackProvider = null;
-
-    for (const [key, provider] of Object.entries(midnight)) {
-      if (!provider) continue;
-      const p = provider as any;
-      
-      const isLace = p.name?.toLowerCase().includes('lace') || key === 'mnLace' || key === 'lace';
-      
-      if (isLace) {
-        if (typeof p.enable === 'function') {
-          return p;
-        } else {
-          fallbackProvider = p; // Keep it as fallback just in case it takes time to initialize
-        }
-      }
+    if (typeof window === 'undefined' || !(window as any).midnight) {
+      return null;
     }
-    
-    // If we didn't find one with .enable(), just return the fallback and let the connection logic handle the missing method
-    return fallbackProvider;
+    const midnight = (window as any).midnight;
+    const entries = Object.entries(midnight);
+
+    // Prefer an entry that self-identifies as Lace if it exposes a name/apiVersion
+    const laceEntry = entries.find(
+      ([key, val]: [string, any]) =>
+        typeof val?.enable === 'function' &&
+        (key.toLowerCase().includes('lace') || val?.name?.toLowerCase?.().includes('lace') || entries.length === 1)
+    );
+    if (laceEntry) return laceEntry[1];
+
+    // Fallback: any injected wallet with a callable enable()
+    const anyWallet = entries.find(([, val]: [string, any]) => typeof val?.enable === 'function');
+    return anyWallet ? anyWallet[1] : null;
   }, []);
 
   const connect = useCallback(async () => {
     let injected = getInjectedLace();
 
     if (!injected && typeof window !== 'undefined' && (window as any).midnight) {
-      // Wait ~300ms and retry in case the extension is slow to inject
-      await new Promise(resolve => setTimeout(resolve, 300));
+      // Wait ~400ms and retry in case the extension is slow to inject
+      await new Promise(resolve => setTimeout(resolve, 400));
       injected = getInjectedLace();
     }
 
