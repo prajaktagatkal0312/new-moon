@@ -32,12 +32,33 @@ export function useWallet() {
 
   const getInjectedLace = useCallback(() => {
     if (typeof window === 'undefined') return null;
-    const windowWithMidnight = window as any;
-    return windowWithMidnight.midnight?.mnLace || windowWithMidnight.midnight?.lace || null;
+    const midnight = (window as any).midnight;
+    if (!midnight) return null;
+
+    for (const [key, provider] of Object.entries(midnight)) {
+      if (!provider) continue;
+      const p = provider as any;
+      if (
+        p.name?.toLowerCase().includes('lace') ||
+        key === 'mnLace' ||
+        key === 'lace'
+      ) {
+        // Keep track of the key for debugging
+        console.log('Detected Lace wallet under window.midnight key:', key);
+        return p;
+      }
+    }
+    return null;
   }, []);
 
   const connect = useCallback(async () => {
-    const injected = getInjectedLace();
+    let injected = getInjectedLace();
+
+    if (!injected && typeof window !== 'undefined' && (window as any).midnight) {
+      // Wait ~300ms and retry in case the extension is slow to inject
+      await new Promise(resolve => setTimeout(resolve, 300));
+      injected = getInjectedLace();
+    }
 
     if (!injected) {
       setWalletState((prev) => ({
@@ -80,6 +101,7 @@ export function useWallet() {
 
       localStorage.setItem(STORAGE_KEY, 'true');
     } catch (err: any) {
+      console.error('Failed to connect to Lace wallet. Raw error:', err);
       setWalletState((prev) => ({
         ...prev,
         status: 'ERROR',

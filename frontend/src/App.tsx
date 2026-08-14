@@ -84,6 +84,7 @@ export function App() {
         address={wallet.address}
         network={wallet.network}
         balance={wallet.balance}
+        error={wallet.error}
         connect={wallet.connect}
         disconnect={wallet.disconnect}
         preprodAddress={PREPROD_CONTRACT_ADDRESS}

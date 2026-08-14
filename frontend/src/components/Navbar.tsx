@@ -7,6 +7,7 @@ interface NavbarProps {
   address: string | null;
   network: string | null;
   balance: string | null;
+  error?: string | null;
   connect: () => void;
   disconnect: () => void;
   preprodAddress: string;
@@ -17,6 +18,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   address,
   network,
   balance,
+  error,
   connect,
   disconnect,
   preprodAddress,
@@ -93,6 +95,32 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 onClick={connect}
                 className="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold transition-all"
+              >
+                Retry
+              </button>
+            </div>
+          ) : status === 'NOT_INSTALLED' ? (
+            <div className="flex items-center space-x-2">
+              <span className="text-xs text-slate-400">Lace wallet not detected</span>
+              <a
+                href="https://www.lace.io/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold transition-all flex items-center space-x-1"
+              >
+                <span>Install Lace</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
+          ) : status === 'ERROR' ? (
+            <div className="flex items-center space-x-2">
+              <div className="px-3 py-1.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-xs flex items-center space-x-1.5 max-w-[250px]" title={error || 'Connection error'}>
+                <AlertTriangle className="w-3.5 h-3.5 text-red-400 shrink-0" />
+                <span className="truncate">{error || 'Connection failed'}</span>
+              </div>
+              <button
+                onClick={connect}
+                className="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold transition-all shrink-0"
               >
                 Retry
               </button>
