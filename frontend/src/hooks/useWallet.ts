@@ -35,20 +35,25 @@ export function useWallet() {
     const midnight = (window as any).midnight;
     if (!midnight) return null;
 
+    let fallbackProvider = null;
+
     for (const [key, provider] of Object.entries(midnight)) {
       if (!provider) continue;
       const p = provider as any;
-      if (
-        p.name?.toLowerCase().includes('lace') ||
-        key === 'mnLace' ||
-        key === 'lace'
-      ) {
-        // Keep track of the key for debugging
-        console.log('Detected Lace wallet under window.midnight key:', key);
-        return p;
+      
+      const isLace = p.name?.toLowerCase().includes('lace') || key === 'mnLace' || key === 'lace';
+      
+      if (isLace) {
+        if (typeof p.enable === 'function') {
+          return p;
+        } else {
+          fallbackProvider = p; // Keep it as fallback just in case it takes time to initialize
+        }
       }
     }
-    return null;
+    
+    // If we didn't find one with .enable(), just return the fallback and let the connection logic handle the missing method
+    return fallbackProvider;
   }, []);
 
   const connect = useCallback(async () => {
@@ -65,6 +70,15 @@ export function useWallet() {
         ...prev,
         status: 'NOT_INSTALLED',
         error: 'Lace wallet extension is not installed.',
+      }));
+      return;
+    }
+
+    if (typeof injected.enable !== 'function') {
+      setWalletState((prev) => ({
+        ...prev,
+        status: 'NOT_INSTALLED',
+        error: "Lace wallet detected but its API isn't ready — try reloading the page.",
       }));
       return;
     }
