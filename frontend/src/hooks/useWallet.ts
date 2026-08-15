@@ -40,10 +40,9 @@ export function useWallet() {
     if (typeof window === 'undefined') return null;
     const midnight = (window as any).midnight;
     if (!midnight || typeof midnight !== 'object') return null;
-    const values = Object.values(midnight) as InjectedWalletApi[];
-    const walletApi = values.find(
-      (v) => v && typeof v.enable === 'function'
-    );
+    const values = Object.values(midnight) as any[];
+    // Relax the strict enable check to just find the wallet object
+    const walletApi = values.find((v) => v && typeof v === 'object');
     return walletApi ?? null;
   }, []);
 
