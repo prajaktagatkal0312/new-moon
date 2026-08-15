@@ -103,12 +103,12 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="flex items-center space-x-2">
               <span className="text-xs text-slate-400">Lace wallet not detected</span>
               <a
-                href="https://chromewebstore.google.com/detail/lace-beta/mnjkhhicfjjnhcfdhlgbpabmkgmkkikb"
+                href="https://chromewebstore.google.com/detail/lace-midnight-preview/hgeekaiplokcnmakghbdfbgnlfheichg"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold transition-all flex items-center space-x-1"
               >
-                <span>Install Lace Beta</span>
+                <span>Install Lace</span>
                 <ExternalLink className="w-3 h-3" />
               </a>
             </div>
