@@ -4,23 +4,23 @@
 
 ---
 
-## 🆕 What's New — Level 2 (Frontend + Lace + Preprod)
+## 🆕 What's New — Level 2 (Frontend + Lace + Preview)
 
-MoonVow now includes a **full browser frontend** built with Vite + React + TypeScript that connects to the **Lace wallet** via Midnight's DApp Connector API. The contract has been redeployed to the **Midnight Preprod Testnet**, and the frontend is deployed live so anyone can demo it. The UI features a side-by-side **"Observable Privacy Center"** that makes the zero-knowledge privacy claim independently verifiable — you can see the public commitment hash on-chain and confirm the goal text is nowhere in the transaction data.
+MoonVow now includes a **full browser frontend** built with Vite + React + TypeScript that connects to the **Lace wallet** via Midnight's DApp Connector API. The contract has been redeployed to the **Midnight Preview Testnet**, and the frontend is deployed live so anyone can demo it. The UI features a side-by-side **"Observable Privacy Center"** that makes the zero-knowledge privacy claim independently verifiable — you can see the public commitment hash on-chain and confirm the goal text is nowhere in the transaction data.
 
 ### 🔗 Live Demo
 
 **Live Demo URL:** [https://moonvow-midnight.vercel.app](https://moonvow-midnight.vercel.app)
 
-### 📜 Deployed Preprod Contract
+### 📜 Deployed Preview Contract
 
 | Parameter | Details |
 |---|---|
-| **Network** | Midnight Preprod Testnet |
+| **Network** | Midnight Preview Testnet |
 | **Contract ID** | `e9cc9a964372b4d8d1a4bcd839cc70d8055be22fb2d2622616e107dd46059944` |
-| **Verify on Explorer** | [Preprod Explorer Link](https://explorer.preprod.midnight.network/contract/e9cc9a964372b4d8d1a4bcd839cc70d8055be22fb2d2622616e107dd46059944) |
+| **Verify on Explorer** | [Preview Explorer Link](https://explorer.Preview.midnight.network/contract/e9cc9a964372b4d8d1a4bcd839cc70d8055be22fb2d2622616e107dd46059944) |
 
-> **How to verify independently:** Copy the Contract ID above and look it up on the Midnight Preprod block explorer. Inspect any `commitVow` transaction — you'll see only the 32-byte hash commitment in the public state. The goal text and salt are absent from all on-chain data, indexer records, and transaction payloads.
+> **How to verify independently:** Copy the Contract ID above and look it up on the Midnight Preview block explorer. Inspect any `commitVow` transaction — you'll see only the 32-byte hash commitment in the public state. The goal text and salt are absent from all on-chain data, indexer records, and transaction payloads.
 
 ### 🎬 Demo Video
 
@@ -30,7 +30,7 @@ MoonVow now includes a **full browser frontend** built with Vite + React + TypeS
 
 > **This app proves a vow was made and can prove it was fulfilled, without ever revealing the vow's content to the chain, the indexer, or any third party — only the person who made the commitment (holding the original goal text and salt in their browser's localStorage) can produce a matching fulfillment proof.**
 
-The UI's **Observable Privacy Center** lets any viewer verify this themselves: the left panel shows exactly what the blockchain stores (a 32-byte hash and a boolean status), while the right panel shows the private data that never leaves the browser (goal text + salt). A one-click "copy hash" button lets you check the Preprod explorer yourself and confirm the goal text appears nowhere on-chain.
+The UI's **Observable Privacy Center** lets any viewer verify this themselves: the left panel shows exactly what the blockchain stores (a 32-byte hash and a boolean status), while the right panel shows the private data that never leaves the browser (goal text + salt). A one-click "copy hash" button lets you check the Preview explorer yourself and confirm the goal text appears nowhere on-chain.
 
 ---
 
@@ -38,7 +38,7 @@ The UI's **Observable Privacy Center** lets any viewer verify this themselves: t
 
 ### Prerequisites
 - Node.js >= 22.0.0
-- [Lace Wallet](https://www.lace.io/) browser extension (set to **Preprod** network)
+- [Lace Wallet](https://www.lace.io/) browser extension (set to **Preview** network)
 
 ### Local Frontend Dev
 
@@ -62,16 +62,16 @@ npm run frontend:dev
 
 | Variable | Description |
 |---|---|
-| `VITE_PREPROD_CONTRACT_ADDRESS` | Deployed MoonVow contract address on Preprod |
-| `VITE_MIDNIGHT_INDEXER_URL` | Preprod indexer GraphQL endpoint |
-| `VITE_MIDNIGHT_NODE_URL` | Preprod RPC node URL |
+| `VITE_Preview_CONTRACT_ADDRESS` | Deployed MoonVow contract address on Preview |
+| `VITE_MIDNIGHT_INDEXER_URL` | Preview indexer GraphQL endpoint |
+| `VITE_MIDNIGHT_NODE_URL` | Preview RPC node URL |
 
 See [`.env.example`](.env.example) for all values.
 
-### Switching Lace to Preprod
+### Switching Lace to Preview
 1. Open the Lace wallet extension in your browser.
 2. Go to **Settings → Network**.
-3. Select **Preprod**.
+3. Select **Preview**.
 4. Refresh the MoonVow dApp page — the navbar will show a green "Connected" pill once on the correct network.
 
 ---
@@ -154,15 +154,15 @@ export circuit commitVow(): [] {
 
 ## 📜 Mainnet / Testnet Contract Details
 
-### 🧪 Midnight Preprod Testnet Deployment (Level 2 — Current)
+### 🧪 Midnight Preview Testnet Deployment (Level 2 — Current)
 
 | Parameter | Details |
 |---|---|
-| **Network** | Midnight Preprod Testnet |
+| **Network** | Midnight Preview Testnet |
 | **Contract ID (Address)** | `e9cc9a964372b4d8d1a4bcd839cc70d8055be22fb2d2622616e107dd46059944` |
-| **Deployer Address** | `mn_addr_preprod10j4v0yvnyueuq2yekl9sqwc2lxkg87vw3pqv33kpsurjzcflt54ssz5l0v` |
+| **Deployer Address** | `mn_addr_Preview10j4v0yvnyueuq2yekl9sqwc2lxkg87vw3pqv33kpsurjzcflt54ssz5l0v` |
 | **Compiler Version** | Compact v0.23+ / v0.31.1 |
-| **Contract Status** | 🟢 Active & Deployed on Preprod |
+| **Contract Status** | 🟢 Active & Deployed on Preview |
 
 ### 🧪 Midnight Preview Testnet Deployment (Level 1)
 
@@ -228,7 +228,7 @@ npm run frontend:dev
 
 ```bash
 npm run network preview     # Switch active network to Preview Testnet
-npm run network preprod     # Switch active network to Preprod Testnet
+npm run network Preview     # Switch active network to Preview Testnet
 npm run network undeployed  # Switch active network to Local Devnet
 ```
 
