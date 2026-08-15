@@ -28,7 +28,7 @@ const EXPECTED_NETWORK = 'preprod';
 
 export function useWallet() {
   const [walletState, setWalletState] = useState<WalletState>({
-    status: 'DISCONNECTED',
+    status: 'CONNECTING', // Start in CONNECTING state while we poll on mount
     address: null,
     network: EXPECTED_NETWORK,
     balance: null,
