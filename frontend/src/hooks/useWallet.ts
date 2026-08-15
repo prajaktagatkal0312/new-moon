@@ -31,23 +31,16 @@ export function useWallet() {
   });
 
   const getInjectedLace = useCallback(() => {
-    if (typeof window === 'undefined' || !(window as any).midnight) {
-      return null;
-    }
+    if (typeof window === 'undefined') return null;
     const midnight = (window as any).midnight;
-    const entries = Object.entries(midnight);
-
-    // Prefer an entry that self-identifies as Lace if it exposes a name/apiVersion
-    const laceEntry = entries.find(
-      ([key, val]: [string, any]) =>
-        typeof val?.enable === 'function' &&
-        (key.toLowerCase().includes('lace') || val?.name?.toLowerCase?.().includes('lace') || entries.length === 1)
+    if (!midnight || typeof midnight !== 'object') return null;
+    const values = Object.values(midnight);
+    // The injected wallet API lives under a random UUID key — find the
+    // first entry that looks like a real wallet API (has enable()).
+    const walletApi = values.find(
+      (v: any) => v && typeof v.enable === 'function'
     );
-    if (laceEntry) return laceEntry[1];
-
-    // Fallback: any injected wallet with a callable enable()
-    const anyWallet = entries.find(([, val]: [string, any]) => typeof val?.enable === 'function');
-    return anyWallet ? anyWallet[1] : null;
+    return walletApi ?? null;
   }, []);
 
   const connect = useCallback(async () => {
