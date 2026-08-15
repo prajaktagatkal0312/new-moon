@@ -131,14 +131,14 @@ export function useWallet() {
   }, []);
 
   useEffect(() => {
-    const wasConnected = localStorage.getItem(STORAGE_KEY) === 'true';
+    // Passive check on load
     const injected = getInjectedLace();
     if (!injected) {
       setWalletState((prev) => ({ ...prev, status: 'NOT_INSTALLED' }));
-    } else if (wasConnected) {
-      connect();
+    } else {
+      setWalletState((prev) => ({ ...prev, status: 'DISCONNECTED' }));
     }
-  }, [getInjectedLace, connect]);
+  }, [getInjectedLace]);
 
   return {
     ...walletState,
