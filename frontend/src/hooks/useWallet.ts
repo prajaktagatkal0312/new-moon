@@ -48,19 +48,19 @@ export function useWallet() {
   }, []);
 
   const connect = useCallback(async () => {
-    console.log('[connect] start');
+    console.log('[connect] window.midnight at click time:', (window as any).midnight);
     let injected = getInjectedLace();
-    console.log('[connect] getInjectedLace result:', injected);
+    console.log('[connect] getInjectedLace() returned:', injected);
 
     if (!injected && typeof window !== 'undefined' && (window as any).midnight) {
-      console.log('[connect] retrying after 400ms delay');
+      console.log('[connect] retrying in 400ms...');
       await new Promise(resolve => setTimeout(resolve, 400));
       injected = getInjectedLace();
-      console.log('[connect] retry result:', injected);
+      console.log('[connect] after retry:', injected);
     }
 
     if (!injected) {
-      console.log('[connect] NOT_INSTALLED - no injected wallet found');
+      console.log('[connect] giving up - NOT_INSTALLED');
       setWalletState((prev) => ({
         ...prev,
         status: 'NOT_INSTALLED',
@@ -79,11 +79,11 @@ export function useWallet() {
       return;
     }
 
+    console.log('[connect] about to call injected.enable()');
     try {
-      console.log('[connect] calling injected.enable()...');
       setWalletState((prev) => ({ ...prev, status: 'CONNECTING', error: null }));
       const api = await injected.enable();
-      console.log('[connect] enable() resolved:', api);
+      console.log('[connect] enable() succeeded:', api);
 
       let address = 'mn_addr_preprod10j4v0yvnyueuq2yekl9sqwc2lxkg87vw3pqv33kpsurjzcflt54ssz5l0v';
       let network = EXPECTED_NETWORK;
