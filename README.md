@@ -24,7 +24,7 @@ MoonVow now includes a **full browser frontend** built with Vite + React + TypeS
 
 ### 🎬 Demo Video
 
-**Demo Video:** [Watch on Loom](https://www.loom.com/share/moonvow-demo) *(to be recorded — see Task 7 below)*
+**Demo Video:** [Watch on Loom](https://www.loom.com/share/de0060b786d647ec96a9db776f554e05)
 
 ### 🔐 Privacy Claim
 

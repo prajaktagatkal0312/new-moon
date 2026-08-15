@@ -31,8 +31,8 @@ export function App() {
 
   const handleCommitVow = async (newVow: LocalVow) => {
     try {
-      if (wallet.status === 'CONNECTED' && wallet.api?.callContract) {
-        const tx = await wallet.api.callContract('commitVow', {
+      if (wallet.status === 'CONNECTED' && (wallet.api as any)?.callContract) {
+        const tx = await (wallet.api as any).callContract('commitVow', {
           goalText: newVow.goalText,
           salt: newVow.saltHex,
         });
@@ -56,8 +56,8 @@ export function App() {
 
   const handleFulfillVow = async (vow: LocalVow) => {
     try {
-      if (wallet.status === 'CONNECTED' && wallet.api?.callContract) {
-        const tx = await wallet.api.callContract('fulfillVow', {
+      if (wallet.status === 'CONNECTED' && (wallet.api as any)?.callContract) {
+        const tx = await (wallet.api as any).callContract('fulfillVow', {
           goalText: vow.goalText,
           salt: vow.saltHex,
         });

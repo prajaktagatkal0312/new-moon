@@ -37,7 +37,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="flex items-center space-x-2">
               <h1 className="font-extrabold text-xl tracking-tight text-white glow-text">MoonVow</h1>
               <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-purple-500/10 text-purple-300 border border-purple-500/20">
-                Midnight Preprod
+                Midnight Preview
               </span>
             </div>
             <p className="text-xs text-slate-400">Zero-Knowledge Commitment Protocol</p>
@@ -46,13 +46,13 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Contract Info Pill & Wallet Controls */}
         <div className="flex items-center flex-wrap space-x-3">
-          {/* Preprod Contract Explorer Link */}
+          {/* Preview Contract Explorer Link */}
           <a
             href={`https://explorer.preprod.midnight.network/contract/${preprodAddress}`}
             target="_blank"
             rel="noopener noreferrer"
             className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-slate-900/80 text-slate-300 hover:text-white border border-slate-800 hover:border-slate-700 text-xs font-mono transition-all"
-            title="View Preprod Contract on Midnight Explorer"
+            title="View Preview Contract on Midnight Explorer"
           >
             <Shield className="w-3.5 h-3.5 text-purple-400" />
             <span>Contract: {preprodAddress.slice(0, 8)}...{preprodAddress.slice(-6)}</span>
@@ -90,7 +90,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="flex items-center space-x-2">
               <div className="px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-center space-x-1.5">
                 <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
-                <span>Switch Lace to Preprod</span>
+                <span>Switch Lace to Preview</span>
               </div>
               <button
                 onClick={connect}
