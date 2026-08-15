@@ -10,7 +10,7 @@ MoonVow now includes a **full browser frontend** built with Vite + React + TypeS
 
 ### 🔗 Live Demo
 
-**Live Demo URL:** [https://moonvow-midnight.vercel.app](https://moonvow-midnight.vercel.app)
+**Live Demo URL:** [https://new-moon-three.vercel.app/](https://new-moon-three.vercel.app/)
 
 ### 📜 Deployed Preview Contract
 
