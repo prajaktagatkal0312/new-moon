@@ -48,14 +48,19 @@ export function useWallet() {
   }, []);
 
   const connect = useCallback(async () => {
+    console.log('[connect] start');
     let injected = getInjectedLace();
+    console.log('[connect] getInjectedLace result:', injected);
 
     if (!injected && typeof window !== 'undefined' && (window as any).midnight) {
+      console.log('[connect] retrying after 400ms delay');
       await new Promise(resolve => setTimeout(resolve, 400));
       injected = getInjectedLace();
+      console.log('[connect] retry result:', injected);
     }
 
     if (!injected) {
+      console.log('[connect] NOT_INSTALLED - no injected wallet found');
       setWalletState((prev) => ({
         ...prev,
         status: 'NOT_INSTALLED',
@@ -65,6 +70,7 @@ export function useWallet() {
     }
 
     if (typeof injected.enable !== 'function') {
+      console.log('[connect] injected.enable is not a function:', typeof injected.enable);
       setWalletState((prev) => ({
         ...prev,
         status: 'NOT_INSTALLED',
@@ -74,8 +80,10 @@ export function useWallet() {
     }
 
     try {
+      console.log('[connect] calling injected.enable()...');
       setWalletState((prev) => ({ ...prev, status: 'CONNECTING', error: null }));
       const api = await injected.enable();
+      console.log('[connect] enable() resolved:', api);
 
       let address = 'mn_addr_preprod10j4v0yvnyueuq2yekl9sqwc2lxkg87vw3pqv33kpsurjzcflt54ssz5l0v';
       let network = EXPECTED_NETWORK;
@@ -105,7 +113,7 @@ export function useWallet() {
 
       localStorage.setItem(STORAGE_KEY, 'true');
     } catch (err: any) {
-      console.error('Failed to connect to Lace wallet. Raw error:', err);
+      console.error('[connect] enable() threw:', err);
       setWalletState((prev) => ({
         ...prev,
         status: 'ERROR',
