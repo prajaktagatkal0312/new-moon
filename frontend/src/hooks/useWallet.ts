@@ -127,12 +127,28 @@ export function useWallet() {
   }, []);
 
   useEffect(() => {
-    const injected = getInjectedLace();
-    if (!injected) {
-      setWalletState((prev) => ({ ...prev, status: 'NOT_INSTALLED' }));
-    } else {
-      setWalletState((prev) => ({ ...prev, status: 'DISCONNECTED' }));
-    }
+    let cancelled = false;
+    let attempts = 0;
+    const maxAttempts = 10; // ~5 seconds total
+    const intervalMs = 500;
+
+    const check = () => {
+      if (cancelled) return;
+      const injected = getInjectedLace();
+      if (injected) {
+        setWalletState((prev) => ({ ...prev, status: 'DISCONNECTED' }));
+        return;
+      }
+      attempts += 1;
+      if (attempts >= maxAttempts) {
+        setWalletState((prev) => ({ ...prev, status: 'NOT_INSTALLED' }));
+        return;
+      }
+      setTimeout(check, intervalMs);
+    };
+
+    check();
+    return () => { cancelled = true; };
   }, [getInjectedLace]);
 
   return {
