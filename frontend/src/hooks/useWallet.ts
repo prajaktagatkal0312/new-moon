@@ -17,6 +17,12 @@ export interface WalletState {
   api: any | null;
 }
 
+export interface InjectedWalletApi {
+  enable: () => Promise<any>;
+  state?: (() => Promise<any>) | any;
+  [key: string]: any;
+}
+
 const STORAGE_KEY = 'moonvow_wallet_connected';
 const EXPECTED_NETWORK = 'preprod';
 
@@ -30,15 +36,13 @@ export function useWallet() {
     api: null,
   });
 
-  const getInjectedLace = useCallback(() => {
+  const getInjectedLace = useCallback((): InjectedWalletApi | null => {
     if (typeof window === 'undefined') return null;
     const midnight = (window as any).midnight;
     if (!midnight || typeof midnight !== 'object') return null;
-    const values = Object.values(midnight);
-    // The injected wallet API lives under a random UUID key — find the
-    // first entry that looks like a real wallet API (has enable()).
+    const values = Object.values(midnight) as InjectedWalletApi[];
     const walletApi = values.find(
-      (v: any) => v && typeof v.enable === 'function'
+      (v) => v && typeof v.enable === 'function'
     );
     return walletApi ?? null;
   }, []);
@@ -47,7 +51,6 @@ export function useWallet() {
     let injected = getInjectedLace();
 
     if (!injected && typeof window !== 'undefined' && (window as any).midnight) {
-      // Wait ~400ms and retry in case the extension is slow to inject
       await new Promise(resolve => setTimeout(resolve, 400));
       injected = getInjectedLace();
     }
@@ -124,7 +127,6 @@ export function useWallet() {
   }, []);
 
   useEffect(() => {
-    // Passive check on load
     const injected = getInjectedLace();
     if (!injected) {
       setWalletState((prev) => ({ ...prev, status: 'NOT_INSTALLED' }));
