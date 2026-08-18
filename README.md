@@ -108,23 +108,23 @@ The blockchain stores ONLY:
 
 ### 🛡️ 2. Private Witness Inputs (Off-Chain Client)
 Inputs declared via `witness` that are resolved locally on the user's client machine and **NEVER** passed to `disclose()`:
-- `goalText: Opaque<"string">` — The actual goal text (e.g. *"Run a marathon by December"*), kept strictly off-chain.
+- `goalTextHash: Bytes<32>` — SHA-256 hash of the goal text (e.g. *"Run a marathon by December"*), kept strictly off-chain.
 - `salt: Bytes<32>` — Random 256-bit salt preventing commitment collision or linkability across users.
 
 ### 📜 Deliberate `disclose()` Boundaries in `contracts/moon-vow.compact`
 
 ```compact
 export circuit commitVow(): [] {
-    const s = goalTextHash();
+    const goalHash = goalTextHash();
     const s = salt();
     
     // Compute 32-byte persistent commitment hash locally from private witness inputs
-    const commitment = persistentCommit<Opaque<"string">>(text, s);
+    const commitment = persistentCommit<Bytes<32>>(goalHash, s);
     assert(!vows.member(commitment), "Vow commitment already exists");
     
     // DISCLOSURE BOUNDARY:
     // `disclose(commitment)` reveals ONLY the 32-byte hash commitment to the public ledger map key.
-    // The `goalText` and `salt` remain strictly private on the user's machine and are NEVER
+    // The `goalTextHash` and `salt` remain strictly private on the user's machine and are NEVER
     // passed to disclose() or stored on the public blockchain.
     vows.insert(disclose(commitment), false);
     vowCount.increment(1);
