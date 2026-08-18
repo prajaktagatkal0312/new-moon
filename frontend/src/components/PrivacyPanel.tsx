@@ -5,13 +5,13 @@ import { LocalVow } from '../utils/vowStorage';
 interface PrivacyPanelProps {
   activeVow: LocalVow | null;
   vowCount: bigint;
-  preprodAddress: string;
+  previewAddress: string;
 }
 
 export const PrivacyPanel: React.FC<PrivacyPanelProps> = ({
   activeVow,
   vowCount,
-  preprodAddress,
+  previewAddress,
 }) => {
   const [copiedHash, setCopiedHash] = useState(false);
   const [showSecretSalt, setShowSecretSalt] = useState(false);
@@ -106,7 +106,7 @@ export const PrivacyPanel: React.FC<PrivacyPanelProps> = ({
 
               <div className="pt-2">
                 <a
-                  href={`https://explorer.preprod.midnight.network/contract/${preprodAddress}`}
+                  href={`https://preview.midnightexplorer.com/contracts/${previewAddress}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full flex items-center justify-center space-x-2 py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800/80 border border-cyan-500/30 text-cyan-300 text-xs font-medium transition-all group"

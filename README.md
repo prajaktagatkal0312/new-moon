@@ -18,7 +18,7 @@ MoonVow now includes a **full browser frontend** built with Vite + React + TypeS
 |---|---|
 | **Network** | Midnight Preview Testnet |
 | **Contract ID** | `e9cc9a964372b4d8d1a4bcd839cc70d8055be22fb2d2622616e107dd46059944` |
-| **Verify on Explorer** | [Preview Explorer Link](https://explorer.Preview.midnight.network/contract/e9cc9a964372b4d8d1a4bcd839cc70d8055be22fb2d2622616e107dd46059944) |
+| **Verify on Explorer** | [Preview Explorer Link](https://preview.midnightexplorer.com/contracts/e9cc9a964372b4d8d1a4bcd839cc70d8055be22fb2d2622616e107dd46059944) |
 
 > **How to verify independently:** Copy the Contract ID above and look it up on the Midnight Preview block explorer. Inspect any `commitVow` transaction — you'll see only the 32-byte hash commitment in the public state. The goal text and salt are absent from all on-chain data, indexer records, and transaction payloads.
 

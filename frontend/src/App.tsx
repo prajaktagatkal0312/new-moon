@@ -7,7 +7,7 @@ import { useWallet } from './hooks/useWallet';
 import { getLocalVows, saveLocalVow, updateLocalVowStatus, LocalVow } from './utils/vowStorage';
 import { ShieldCheck, Moon, Sparkles, CheckCircle2, AlertCircle } from 'lucide-react';
 
-const PREPROD_CONTRACT_ADDRESS = import.meta.env.VITE_PREPROD_CONTRACT_ADDRESS || 'e9cc9a964372b4d8d1a4bcd839cc70d8055be22fb2d2622616e107dd46059944';
+const PREVIEW_CONTRACT_ADDRESS = import.meta.env.VITE_PREVIEW_CONTRACT_ADDRESS || 'e9cc9a964372b4d8d1a4bcd839cc70d8055be22fb2d2622616e107dd46059944';
 
 export function App() {
   const wallet = useWallet();
@@ -87,7 +87,7 @@ export function App() {
         error={wallet.error}
         connect={wallet.connect}
         disconnect={wallet.disconnect}
-        preprodAddress={PREPROD_CONTRACT_ADDRESS}
+        previewAddress={PREVIEW_CONTRACT_ADDRESS}
       />
 
       {/* Toast Alert Banner */}
@@ -126,7 +126,7 @@ export function App() {
         <PrivacyPanel
           activeVow={activeVow}
           vowCount={vowCount}
-          preprodAddress={PREPROD_CONTRACT_ADDRESS}
+          previewAddress={PREVIEW_CONTRACT_ADDRESS}
         />
 
         {/* Forms Section */}

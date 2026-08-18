@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  readonly VITE_PREPROD_CONTRACT_ADDRESS: string;
+  readonly VITE_PREVIEW_CONTRACT_ADDRESS: string;
   readonly VITE_MIDNIGHT_INDEXER_URL: string;
   readonly VITE_MIDNIGHT_INDEXER_WS_URL: string;
   readonly VITE_MIDNIGHT_NODE_URL: string;
