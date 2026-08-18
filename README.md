@@ -115,7 +115,7 @@ Inputs declared via `witness` that are resolved locally on the user's client mac
 
 ```compact
 export circuit commitVow(): [] {
-    const text = goalText();
+    const s = goalTextHash();
     const s = salt();
     
     // Compute 32-byte persistent commitment hash locally from private witness inputs
