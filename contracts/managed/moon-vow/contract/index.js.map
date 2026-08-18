@@ -1,0 +1,8 @@
+{
+  "version": 3,
+  "file": "index.js",
+  "sourceRoot": "../../../../",
+  "sources": ["contracts/moon-vow.compact", "compiler/standard-library.compact"],
+  "names": [],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;EAAA;;;;;;;;;;;;;;;;MAkBA,AAAA,SAkBC;;;;;;;;;;;;;;;;;;;;;;OAAA;MAOD,AAAA,UAgBC;;;;;;;;;;;;;;;;;;;;;;OAAA;;;;;;;;;;GACA;EA5DD;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;IAKA;;;;;;;;;yEAAgC;IAChC;;;;;;;;;;yEAA4C;;;;;;;GAsD3C;EC5DD,AAAA,oBAAA,SAAA;;uDAAA;uDAAA;;;EDSA,AAAA,eAAkC;;0DAAlC,YAAkC;;;;;;;;;;;;;;GAAA;EAClC,AAAA,OAA0B;;0DAA1B,IAA0B;;;;;;;;;;;;;;GAAA;EAQ1B,AAAA,YAkBC;UAhBS,GAAU;UAGV,YAA2D;;kDAAF,GAAC;qDAGxD;;;;;;;;;;;4KAAY,YAAU;;;;0HAAlB;;IAMZ;;;;;;;;;;2HAAqB,YAAU;;;;;;wEAA3B;UAGJ,KAAQ;IAAR;;;;;;;;;;6FAAA,KAAQ;;;;wEAAA;;GACX;EAOD,AAAA,aAgBC;UAdS,GAAU;UAGV,YAA2D;;kDAAF,GAAC;oDAGzD;;;;;;;;;;;2KAAY,YAAU;;;;yHAAlB;;qDACH;;;;;;;;;;;;;;gJAAY,YAAU;;;0HAAlB;;IAMZ;;;;;;;;;;2HAAqB,YAAU;;;;;;wEAA3B;;GACP;;;;;;;;;;;;;;;;IAtDD;qCAAA;;;;;;;;;;;0GAAgC;KAAA;IAChC;;;;;uCAAA;;;;;;;;;;;;;;;;4GAA4C;;;;;;uCAA5C;;;;;;;;;;;;4GAA4C;;;;;;;;;;;;;;uCAA5C;;;;;;;;;;;;;;;4GAA4C;;;;;;;;;;;;;;uCAA5C;;;;;;;;;;;;;;;;;4GAA4C;;;;;;;;;KAAA;;;;;;;;;;;;"
+}

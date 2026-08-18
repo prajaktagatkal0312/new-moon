@@ -7,7 +7,7 @@ export ledger vowCount: Counter;
 export ledger vows: Map<Bytes<32>, Boolean>;
 
 // Private witness declarations — resolved locally on client machine
-witness goalText(): Opaque<"string">;
+witness goalTextHash(): Bytes<32>;
 witness salt(): Bytes<32>;
 
 /**
@@ -17,11 +17,11 @@ witness salt(): Bytes<32>;
  * Discloses ONLY the commitment hash to serve as a public map key.
  */
 export circuit commitVow(): [] {
-    const text = goalText();
+    
     const s = salt();
     
     // Compute 32-byte persistent commitment hash locally from private witness inputs
-    const commitment = persistentCommit<Opaque<"string">>(text, s);
+    const commitment = persistentCommit<Bytes<32>>(goalTextHash(), s);
     
     // Require that the commitment is not already registered on the public ledger
     assert(!vows.member(commitment), "Vow commitment already exists");
@@ -42,11 +42,11 @@ export circuit commitVow(): [] {
  * Recomputes commitment hash from private witness data to prove ownership.
  */
 export circuit fulfillVow(): [] {
-    const text = goalText();
+    
     const s = salt();
     
     // Recompute commitment hash locally from private witness inputs
-    const commitment = persistentCommit<Opaque<"string">>(text, s);
+    const commitment = persistentCommit<Bytes<32>>(goalTextHash(), s);
     
     // Require that the commitment exists on the ledger and is currently unfulfilled (false)
     assert(vows.member(commitment), "Vow commitment does not exist on ledger");
