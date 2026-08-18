@@ -64,11 +64,16 @@ export function hexToBytes(hex: string): Uint8Array {
   return bytes;
 }
 
-export function computeCommitmentHash(goalText: string, salt: Uint8Array): string {
+export async function computeCommitmentHash(goalText: string, salt: Uint8Array): Promise<string> {
   try {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(goalText);
+    const hashBuffer = await globalThis.crypto.subtle.digest('SHA-256', data);
+    const goalTextHash = new Uint8Array(hashBuffer);
+
     const commitment = compactRuntime.persistentCommit(
-      compactRuntime.CompactTypeOpaqueString,
-      goalText,
+      new compactRuntime.CompactTypeBytes(32),
+      goalTextHash,
       salt
     );
     return bytesToHex(commitment);

@@ -30,7 +30,7 @@ export const CommitVowForm: React.FC<CommitVowFormProps> = ({
 
       const salt = generateRandomSalt();
       const saltHex = bytesToHex(salt);
-      const commitmentHex = computeCommitmentHash(goalText.trim(), salt);
+      const commitmentHex = await computeCommitmentHash(goalText.trim(), salt);
 
       const newVow: LocalVow = {
         id: Date.now().toString(),

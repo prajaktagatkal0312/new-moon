@@ -8,7 +8,7 @@ import * as path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { WebSocket } from 'ws';
 import { Buffer } from 'buffer';
-import { randomBytes } from 'node:crypto';
+import { randomBytes, createHash } from 'node:crypto';
 
 // Midnight SDK imports
 import { findDeployedContract } from '@midnight-ntwrk/midnight-js-contracts';
@@ -81,7 +81,10 @@ let activeGoalText = '';
 let activeSalt = new Uint8Array(32);
 
 const witnessHandlers = {
-  goalText: (context: any) => [context.privateState, activeGoalText],
+  goalTextHash: (context: any) => {
+    const hash = createHash('sha256').update(activeGoalText).digest();
+    return [context.privateState, new Uint8Array(hash)];
+  },
   salt: (context: any) => [context.privateState, activeSalt],
 };
 
@@ -190,9 +193,10 @@ async function main() {
           activeSalt = saltBytes;
 
           // Compute commitment locally
+          const goalHash = new Uint8Array(createHash('sha256').update(goal).digest());
           const commitment = compactRuntime.persistentCommit(
-            compactRuntime.CompactTypeOpaqueString,
-            goal,
+            new compactRuntime.CompactTypeBytes(32),
+            goalHash,
             saltBytes,
           );
           const commitmentHex = Buffer.from(commitment).toString('hex');
@@ -263,9 +267,10 @@ async function main() {
           activeSalt = saltBytes;
 
           if (!selectedCommitmentHex) {
+            const goalHash = new Uint8Array(createHash('sha256').update(selectedGoal).digest());
             const commitment = compactRuntime.persistentCommit(
-              compactRuntime.CompactTypeOpaqueString,
-              selectedGoal,
+              new compactRuntime.CompactTypeBytes(32),
+              goalHash,
               saltBytes,
             );
             selectedCommitmentHex = Buffer.from(commitment).toString('hex');
