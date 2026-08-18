@@ -33,7 +33,7 @@ export function App() {
     try {
       if (wallet.status === 'CONNECTED' && (wallet.api as any)?.callContract) {
         const tx = await (wallet.api as any).callContract('commitVow', {
-          goalText: newVow.goalText,
+          goalTextHash: Array.from(new Uint8Array(await globalThis.crypto.subtle.digest('SHA-256', new TextEncoder().encode(newVow.goalText)))).map(b => b.toString(16).padStart(2, '0')).join(''),
           salt: newVow.saltHex,
         });
         newVow.txId = tx?.txId || `tx_${Date.now().toString(16)}`;
@@ -58,7 +58,7 @@ export function App() {
     try {
       if (wallet.status === 'CONNECTED' && (wallet.api as any)?.callContract) {
         const tx = await (wallet.api as any).callContract('fulfillVow', {
-          goalText: vow.goalText,
+          goalTextHash: Array.from(new Uint8Array(await globalThis.crypto.subtle.digest('SHA-256', new TextEncoder().encode(vow.goalText)))).map(b => b.toString(16).padStart(2, '0')).join(''),
           salt: vow.saltHex,
         });
         vow.txId = tx?.txId || vow.txId;
