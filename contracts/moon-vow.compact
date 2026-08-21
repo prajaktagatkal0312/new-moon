@@ -3,58 +3,37 @@ pragma language_version >= 0.23;
 import CompactStandardLibrary;
 
 // Public ledger state — visible on the Midnight blockchain
-export ledger vowCount: Counter;
-export ledger vows: Map<Bytes<32>, Boolean>;
+export ledger verifications: Map<Bytes<32>, Boolean>;
+
+// Deploy-time fixed threshold
+const THRESHOLD: Uint<32> = 18;
 
 // Private witness declarations — resolved locally on client machine
-witness goalTextHash(): Bytes<32>;
+witness privateValue(): Uint<32>;
 witness salt(): Bytes<32>;
 
 /**
- * Circuit: commitVow
- * Commits a personal goal to the Midnight blockchain.
- * Computes a cryptographic commitment hash from private witness data (goal text + salt).
- * Discloses ONLY the commitment hash to serve as a public map key.
+ * Circuit: proveEligibility
+ * Takes the user's private value as a witness, compares it to the threshold,
+ * and commits the boolean result to public state if successful.
  */
-export circuit commitVow(): [] {
-    
+export circuit proveEligibility(): [] {
+    const val = privateValue();
     const s = salt();
     
-    // Compute 32-byte persistent commitment hash locally from private witness inputs
-    const commitment = persistentCommit<Bytes<32>>(goalTextHash(), s);
+    // Check that the private value meets the threshold
+    assert(val >= THRESHOLD, "Private value does not meet the eligibility threshold");
     
-    // Require that the commitment is not already registered on the public ledger
-    assert(!vows.member(commitment), "Vow commitment already exists");
+    // Compute a cryptographic commitment hash from private witness data
+    // This acts as a unique, unlinkable nullifier for this verification
+    const commitment = persistentCommit<Uint<32>>(val, s);
+    
+    // Require that the commitment is not already registered
+    assert(!verifications.member(commitment), "This eligibility proof has already been submitted");
     
     // DISCLOSURE BOUNDARY:
     // `disclose(commitment)` reveals ONLY the 32-byte hash commitment to the public ledger map key.
-    // The `goalText` and `salt` remain strictly private on the user's machine and are NEVER
-    // passed to disclose() or stored on the public blockchain.
-    vows.insert(disclose(commitment), false);
-    
-    // Increment the public counter of total committed vows
-    vowCount.increment(1);
+    // The `privateValue` and `salt` remain strictly private on the user's machine.
+    verifications.insert(disclose(commitment), disclose(true));
 }
 
-/**
- * Circuit: fulfillVow
- * Marks a previously committed goal as fulfilled on the Midnight blockchain.
- * Recomputes commitment hash from private witness data to prove ownership.
- */
-export circuit fulfillVow(): [] {
-    
-    const s = salt();
-    
-    // Recompute commitment hash locally from private witness inputs
-    const commitment = persistentCommit<Bytes<32>>(goalTextHash(), s);
-    
-    // Require that the commitment exists on the ledger and is currently unfulfilled (false)
-    assert(vows.member(commitment), "Vow commitment does not exist on ledger");
-    assert(!vows.lookup(commitment), "Vow commitment is already fulfilled");
-    
-    // DISCLOSURE BOUNDARY:
-    // `disclose(commitment)` reveals ONLY the hash key being updated, and `disclose(true)`
-    // updates its public status to fulfilled. The underlying `goalText` and `salt` remain
-    // completely private and are never revealed on-chain.
-    vows.insert(disclose(commitment), disclose(true));
-}
