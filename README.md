@@ -281,3 +281,27 @@ my-app/
 ├── package.json
 └── README.md
 ```
+## Level 3 — Confidential Credentials
+
+**Feature:** Prove a credential is valid without disclosing it.
+
+### Product Proposal
+This feature allows a user who holds a private credential (e.g., a certification, membership ID, or license issued by some authority) to prove to the dApp that their credential is currently valid. They can do this WITHOUT revealing which credential it is, its contents, or any identifying detail about it. 
+*Note:* For this demo scope, \issueCredential()\ is left open to anyone to easily demonstrate the flow. In a production version, issuance would be restricted to a verified authority.
+
+### Setup & Run
+1. Compile the new contract: \
+pm run compile:credentials\
+2. Run tests: \
+pm run test:credentials\
+
+### Privacy Model
+- **What an observer CAN learn:** A valid-credential proof was submitted, when it was submitted, and whether it succeeded or failed.
+- **What an observer CANNOT learn:** Which credential it was, its contents, any link between the holder and a specific registry entry, or whether the same holder verified more than once.
+
+### Status
+[![CI](https://github.com/prajaktagatkal0312/new-moon/actions/workflows/ci.yml/badge.svg)](https://github.com/prajaktagatkal0312/new-moon/actions/workflows/ci.yml)
+
+### Links
+- **Live Demo URL:** [Placeholder]
+- **Demo Video:** [Placeholder]

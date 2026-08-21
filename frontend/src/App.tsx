@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
 import { PrivacyPanel } from './components/PrivacyPanel';
+import { CredentialProofForm } from './components/CredentialProofForm';
+import { CredentialPrivacyPanel } from './components/CredentialPrivacyPanel';
 import { CommitVowForm } from './components/CommitVowForm';
 import { FulfillVowList } from './components/FulfillVowList';
 import { useWallet } from './hooks/useWallet';
@@ -15,6 +17,8 @@ export function App() {
   const [activeVow, setActiveVow] = useState<LocalVow | null>(null);
   const [vowCount, setVowCount] = useState<bigint>(1n);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [activeTab, setActiveTab] = useState<'moonvow' | 'credentials'>('moonvow');
+  const [isCredentialProving, setIsCredentialProving] = useState(false);
 
   useEffect(() => {
     const loaded = getLocalVows();
@@ -77,6 +81,30 @@ export function App() {
     }
   };
 
+  const handleIssueCredential = async (credentialStr: string) => {
+    setIsCredentialProving(true);
+    try {
+      // Demo stub: in a real app, this calls issueCredential on the smart contract
+      showToast('Credential issued on-chain (Demo mock)', 'success');
+    } catch (err: any) {
+      showToast(err?.message || 'Failed to issue credential.', 'error');
+    } finally {
+      setIsCredentialProving(false);
+    }
+  };
+
+  const handleProveCredential = async (credentialStr: string) => {
+    setIsCredentialProving(true);
+    try {
+      // Demo stub: in a real app, this calls proveCredentialValid on the smart contract
+      showToast('Credential validity proven successfully! (Demo mock)', 'success');
+    } catch (err: any) {
+      showToast(err?.message || 'Failed to prove credential validity.', 'error');
+    } finally {
+      setIsCredentialProving(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
       <Navbar
@@ -88,6 +116,8 @@ export function App() {
         connect={wallet.connect}
         disconnect={wallet.disconnect}
         previewAddress={PREVIEW_CONTRACT_ADDRESS}
+        currentTab={activeTab}
+        onTabChange={setActiveTab}
       />
 
       {/* Toast Alert Banner */}
@@ -106,44 +136,58 @@ export function App() {
 
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-8 space-y-8">
-        {/* Hero Banner */}
-        <section className="glass-panel-glow rounded-3xl p-8 lg:p-10 relative overflow-hidden">
-          <div className="max-w-3xl relative z-10 space-y-4">
-            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs font-medium">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Zero-Knowledge Personal Goal Protocol</span>
-            </div>
-            <h1 className="text-3xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight glow-text">
-              Commit privately at the new moon.<br />Fulfill verifiably on-chain.
-            </h1>
-            <p className="text-slate-300 text-sm lg:text-base leading-relaxed">
-              MoonVow lets you register personal goals without revealing them. Only a 256-bit cryptographic commitment hash touches the Midnight Network ledger. Your goal text and salt remain strictly on your device.
-            </p>
+        {activeTab === 'moonvow' ? (
+          <>
+            {/* Hero Banner */}
+            <section className="glass-panel-glow rounded-3xl p-8 lg:p-10 relative overflow-hidden">
+              <div className="max-w-3xl relative z-10 space-y-4">
+                <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs font-medium">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Zero-Knowledge Personal Goal Protocol</span>
+                </div>
+                <h1 className="text-3xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight glow-text">
+                  Commit privately at the new moon.<br />Fulfill verifiably on-chain.
+                </h1>
+                <p className="text-slate-300 text-sm lg:text-base leading-relaxed">
+                  MoonVow lets you register personal goals without revealing them. Only a 256-bit cryptographic commitment hash touches the Midnight Network ledger. Your goal text and salt remain strictly on your device.
+                </p>
+              </div>
+            </section>
+
+            {/* Observable Privacy Center (Side-by-Side Comparison) */}
+            <PrivacyPanel
+              activeVow={activeVow}
+              vowCount={vowCount}
+              previewAddress={PREVIEW_CONTRACT_ADDRESS}
+            />
+
+            {/* Forms Section */}
+            <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <CommitVowForm
+                onCommit={handleCommitVow}
+                isConnected={wallet.status === 'CONNECTED'}
+              />
+
+              <FulfillVowList
+                vows={localVows}
+                activeVowId={activeVow?.id || null}
+                onSelectVow={(vow) => setActiveVow(vow)}
+                onFulfill={handleFulfillVow}
+                isConnected={wallet.status === 'CONNECTED'}
+              />
+            </section>
+          </>
+        ) : (
+          <div className="max-w-4xl mx-auto space-y-8 mt-4">
+            <CredentialProofForm 
+              onProve={handleProveCredential}
+              onIssue={handleIssueCredential}
+              isProving={isCredentialProving}
+              isConnected={wallet.status === 'CONNECTED'}
+            />
+            <CredentialPrivacyPanel />
           </div>
-        </section>
-
-        {/* Observable Privacy Center (Side-by-Side Comparison) */}
-        <PrivacyPanel
-          activeVow={activeVow}
-          vowCount={vowCount}
-          previewAddress={PREVIEW_CONTRACT_ADDRESS}
-        />
-
-        {/* Forms Section */}
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <CommitVowForm
-            onCommit={handleCommitVow}
-            isConnected={wallet.status === 'CONNECTED'}
-          />
-
-          <FulfillVowList
-            vows={localVows}
-            activeVowId={activeVow?.id || null}
-            onSelectVow={(vow) => setActiveVow(vow)}
-            onFulfill={handleFulfillVow}
-            isConnected={wallet.status === 'CONNECTED'}
-          />
-        </section>
+        )}
       </main>
 
       {/* Footer */}

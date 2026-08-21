@@ -11,6 +11,8 @@ interface NavbarProps {
   connect: () => void;
   disconnect: () => void;
   previewAddress: string;
+  currentTab?: 'moonvow' | 'credentials';
+  onTabChange?: (tab: 'moonvow' | 'credentials') => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -22,6 +24,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   connect,
   disconnect,
   previewAddress,
+  currentTab = 'moonvow',
+  onTabChange,
 }) => {
   return (
     <header className="sticky top-0 z-50 glass-panel border-b border-slate-800/80 px-4 lg:px-8 py-3.5">
@@ -43,6 +47,24 @@ export const Navbar: React.FC<NavbarProps> = ({
             <p className="text-xs text-slate-400">Zero-Knowledge Commitment Protocol</p>
           </div>
         </div>
+
+        {/* Navigation Links */}
+        {onTabChange && (
+          <div className="hidden md:flex items-center space-x-1 bg-slate-900/50 p-1 rounded-lg border border-slate-800">
+            <button
+              onClick={() => onTabChange('moonvow')}
+              className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${currentTab === 'moonvow' ? 'bg-slate-800 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'}`}
+            >
+              MoonVow
+            </button>
+            <button
+              onClick={() => onTabChange('credentials')}
+              className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${currentTab === 'credentials' ? 'bg-slate-800 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'}`}
+            >
+              Credentials
+            </button>
+          </div>
+        )}
 
         {/* Contract Info Pill & Wallet Controls */}
         <div className="flex items-center flex-wrap space-x-3">

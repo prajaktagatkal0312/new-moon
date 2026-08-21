@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Install Compact Compiler
+        run: |
+          wget https://github.com/midnight-ntwrk/compact/releases/download/v0.31.1/compactc-linux-amd64
+          chmod +x compactc-linux-amd64
+          sudo mv compactc-linux-amd64 /usr/local/bin/compactc
+          # Create an alias so 'compact compile' works like on the dev's machine
+          sudo ln -s /usr/local/bin/compactc /usr/local/bin/compact
+          
+      - name: Compile MoonVow Contract
+        run: npm run compile
+        
+      - name: Compile Credentials Contract
+        run: npm run compile:credentials
+        
+      - name: Run MoonVow Tests
+        run: npm run test
+        
+      - name: Run Credentials Tests
+        run: npm run test:credentials
