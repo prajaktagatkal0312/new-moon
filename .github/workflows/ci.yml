@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js 22.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22.x
+
+    - name: Install Compact CLI
+      run: |
+        curl --proto '=https' --tlsv1.2 -LsSf https://github.com/midnightntwrk/compact/releases/latest/download/compact-installer.sh | sh
+        echo "$HOME/.compact/bin" >> $GITHUB_PATH
+
+    - name: Update Compact Compiler
+      run: compact update
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Compile Contract
+      run: |
+        npm run compile
+
+    - name: Upload compiled contract
+      uses: actions/upload-artifact@v4
+      with:
+        name: compiled-contract
+        path: contracts/managed/moon-vow
+
+    - name: Run Contract Tests
+      run: npm test
+
+    - name: Build Frontend
+      run: npm --prefix frontend install && npm run frontend:build

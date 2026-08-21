@@ -2,20 +2,19 @@ import test, { describe, it } from 'node:test';
 import assert from 'node:assert';
 import * as path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { randomBytes, createHash } from 'node:crypto';
+import { randomBytes } from 'node:crypto';
 import * as compactRuntime from '@midnight-ntwrk/compact-runtime';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const contractPath = path.resolve(__dirname, '..', 'contracts', 'managed', 'moon-vow', 'contract', 'index.js');
 const MoonVow = await import(pathToFileURL(contractPath).href);
 
-describe('MoonVow Smart Contract Lifecycle Tests', () => {
-  it('1. commitVow with fresh goal and salt succeeds, increments vowCount, and sets commitment in vows as false', () => {
-    let currentGoal = 'Run a marathon by December';
+describe('Private Eligibility Verifier Tests', () => {
+  it('1. proveEligibility with valid value (>= 18) succeeds and sets status to true', () => {
     let currentSalt = randomBytes(32);
 
     const witnesses = {
-      goalTextHash: (context) => [context.privateState, new Uint8Array(createHash('sha256').update(currentGoal).digest())],
+      privateValue: (context) => [context.privateState, 20n], // 20 >= 18
       salt: (context) => [context.privateState, currentSalt],
     };
 
@@ -38,30 +37,29 @@ describe('MoonVow Smart Contract Lifecycle Tests', () => {
       costModel: compactRuntime.CostModel.initialCostModel(),
     };
 
-    const res = contract.circuits.commitVow(circuitContext);
+    const res = contract.circuits.proveEligibility(circuitContext);
     circuitContext = res.context;
-    assert.ok(res, 'commitVow circuit execution returned result');
+    assert.ok(res, 'proveEligibility circuit execution returned result');
 
     const ledgerState = MoonVow.ledger(circuitContext.currentQueryContext.state);
-    assert.strictEqual(ledgerState.vowCount, 1n, 'vowCount should increment to 1');
-
+    
+    // Check that the verification is stored correctly
     const expectedCommitment = compactRuntime.persistentCommit(
-      new compactRuntime.CompactTypeBytes(32),
-      new Uint8Array(createHash('sha256').update(currentGoal).digest()),
+      new compactRuntime.CompactTypeUint(32),
+      20n,
       currentSalt,
     );
 
-    assert.ok(ledgerState.vows.member(expectedCommitment), 'vows map contains commitment');
-    assert.strictEqual(ledgerState.vows.lookup(expectedCommitment), false, 'vow status is unfulfilled (false)');
+    assert.ok(ledgerState.verifications.member(expectedCommitment), 'verifications map contains commitment');
+    assert.strictEqual(ledgerState.verifications.lookup(expectedCommitment), true, 'status is eligible (true)');
   });
 
-  it('2. commitVow called twice with identical goal and salt is rejected (duplicate commitment)', () => {
-    const goal = 'Read 20 books this year';
-    const salt = randomBytes(32);
+  it('2. proveEligibility boundary test: raw value is NOT in public state', () => {
+    let currentSalt = randomBytes(32);
 
     const witnesses = {
-      goalTextHash: (context) => [context.privateState, new Uint8Array(createHash('sha256').update(goal).digest())],
-      salt: (context) => [context.privateState, salt],
+      privateValue: (context) => [context.privateState, 25n],
+      salt: (context) => [context.privateState, currentSalt],
     };
 
     const contract = new MoonVow.Contract(witnesses);
@@ -80,26 +78,25 @@ describe('MoonVow Smart Contract Lifecycle Tests', () => {
       costModel: compactRuntime.CostModel.initialCostModel(),
     };
 
-    // First commitment succeeds
-    circuitContext = contract.circuits.commitVow(circuitContext).context;
+    circuitContext = contract.circuits.proveEligibility(circuitContext).context;
 
-    // Second commitment with same inputs throws error
-    assert.throws(
-      () => {
-        circuitContext = contract.circuits.commitVow(circuitContext).context;
-      },
-      /already exists/,
-      'Duplicate commitVow should throw Vow commitment already exists error',
+    // The raw state is inside circuitContext.currentQueryContext.state
+    // We stringify the state and ensure '25' isn't explicitly there as a number, 
+    // or rather, we just check ledgerState
+    const ledgerState = MoonVow.ledger(circuitContext.currentQueryContext.state);
+    const jsonState = JSON.stringify(ledgerState, (key, value) => 
+        typeof value === 'bigint' ? value.toString() : value
     );
+    
+    assert.ok(!jsonState.includes('"25"'), 'The raw private value should not be in public state');
   });
 
-  it('3. fulfillVow on existing unfulfilled commitment succeeds and flips status to true', () => {
-    const goal = 'Learn Rust programming';
-    const salt = randomBytes(32);
+  it('3. proveEligibility fails when value is under threshold', () => {
+    let currentSalt = randomBytes(32);
 
     const witnesses = {
-      goalTextHash: (context) => [context.privateState, new Uint8Array(createHash('sha256').update(goal).digest())],
-      salt: (context) => [context.privateState, salt],
+      privateValue: (context) => [context.privateState, 17n], // 17 < 18
+      salt: (context) => [context.privateState, currentSalt],
     };
 
     const contract = new MoonVow.Contract(witnesses);
@@ -118,69 +115,12 @@ describe('MoonVow Smart Contract Lifecycle Tests', () => {
       costModel: compactRuntime.CostModel.initialCostModel(),
     };
 
-    circuitContext = contract.circuits.commitVow(circuitContext).context;
-
-    const commitment = compactRuntime.persistentCommit(
-      new compactRuntime.CompactTypeBytes(32),
-      new Uint8Array(createHash('sha256').update(goal).digest()),
-      salt,
-    );
-
-    let ledgerState = MoonVow.ledger(circuitContext.currentQueryContext.state);
-    assert.strictEqual(ledgerState.vows.lookup(commitment), false, 'Vow status before fulfillment is false');
-
-    // Fulfill vow
-    circuitContext = contract.circuits.fulfillVow(circuitContext).context;
-
-    ledgerState = MoonVow.ledger(circuitContext.currentQueryContext.state);
-    assert.strictEqual(ledgerState.vows.lookup(commitment), true, 'Vow status after fulfillment is true');
-  });
-
-  it('4. fulfillVow on nonexistent or already-fulfilled commitment fails', () => {
-    let goal = 'Deploy MoonVow on Midnight';
-    let salt = randomBytes(32);
-
-    const witnesses = {
-      goalTextHash: (context) => [context.privateState, new Uint8Array(createHash('sha256').update(goal).digest())],
-      salt: (context) => [context.privateState, salt],
-    };
-
-    const contract = new MoonVow.Contract(witnesses);
-    const initialStateResult = contract.initialState({
-      initialPrivateState: {},
-      initialZswapLocalState: { coinPublicKey: new Uint8Array(32) },
-    });
-
-    let circuitContext = {
-      currentQueryContext: new compactRuntime.QueryContext(
-        initialStateResult.currentContractState.data,
-        compactRuntime.dummyContractAddress(),
-      ),
-      currentPrivateState: initialStateResult.currentPrivateState,
-      currentZswapLocalState: initialStateResult.currentZswapLocalState,
-      costModel: compactRuntime.CostModel.initialCostModel(),
-    };
-
-    // Case A: Fulfill nonexistent vow fails
     assert.throws(
       () => {
-        circuitContext = contract.circuits.fulfillVow(circuitContext).context;
+        contract.circuits.proveEligibility(circuitContext);
       },
-      /does not exist/,
-      'Fulfilling non-existent vow should throw error',
-    );
-
-    // Commit and fulfill once
-    circuitContext = contract.circuits.commitVow(circuitContext).context;
-    circuitContext = contract.circuits.fulfillVow(circuitContext).context;
-
-    // Case B: Fulfilling already-fulfilled vow fails
-    assert.throws(
-      () => {
-        circuitContext = contract.circuits.fulfillVow(circuitContext).context;
-      },
-      /already fulfilled/,
-      'Fulfilling an already fulfilled vow should throw error',
+      /Private value does not meet the eligibility threshold/,
+      'proveEligibility should throw if value is under threshold'
     );
   });
 });
