@@ -18,4 +18,4 @@ computing gzip size...
 [2mdist/[22m[2massets/[22m[32mmidnight_onchain_runtime_wasm_bg-Bk-cVMvn.wasm  [39m[1m[2m1,333.65 kB[22m[1m[22m
 [2mdist/[22m[2massets/[22m[35mindex-BhFsdJzd.css                              [39m[1m[2m   22.54 kB[22m[1m[22m[2m │ gzip:  4.91 kB[22m
 [2mdist/[22m[2massets/[22m[36mindex-DSvJKGaq.js                               [39m[1m[2m  211.31 kB[22m[1m[22m[2m │ gzip: 63.98 kB[22m
-[32m✓ built in 1.95s[39m
+[32m✓ built in 2.40s[39m
