@@ -2,5 +2,4 @@
 > my-app@1.0.0 compile
 > compact compile contracts/moon-vow.compact contracts/managed/moon-vow
 
-Exception: moon-vow.compact line 26 char 19:
-  unbound identifier THRESHOLD
+Compiling 1 circuits:
