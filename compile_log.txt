@@ -1,0 +1,6 @@
+
+> my-app@1.0.0 compile
+> compact compile contracts/moon-vow.compact contracts/managed/moon-vow
+
+Exception: moon-vow.compact line 9 char 1:
+  parse error: found keyword "const" looking for a program element or end of file
