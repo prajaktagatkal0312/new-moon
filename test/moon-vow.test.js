@@ -45,7 +45,7 @@ describe('Private Eligibility Verifier Tests', () => {
     
     // Check that the verification is stored correctly
     const expectedCommitment = compactRuntime.persistentCommit(
-      new compactRuntime.CompactTypeUint(32),
+      new compactRuntime.CompactTypeUnsignedInteger((2n ** 32n) - 1n, 4),
       20n,
       currentSalt,
     );

@@ -35,7 +35,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h1 className="font-extrabold text-xl tracking-tight text-white glow-text">MoonVow</h1>
+              <h1 className="font-extrabold text-xl tracking-tight text-white glow-text">Eligibility Verifier</h1>
               <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-purple-500/10 text-purple-300 border border-purple-500/20">
                 Midnight Preview
               </span>

@@ -1,18 +1,18 @@
 import * as compactRuntime from '@midnight-ntwrk/compact-runtime';
 
-export interface LocalVow {
+export interface EligibilityRecord {
   id: string;
-  goalText: string;
+  privateValue: number;
   saltHex: string;
   commitmentHex: string;
   createdAt: string;
-  fulfilled: boolean;
+  verified: boolean;
   txId?: string;
 }
 
-const STORAGE_KEY = 'moonvow_local_secrets_v1';
+const STORAGE_KEY = 'eligibility_local_secrets_v1';
 
-export function getLocalVows(): LocalVow[] {
+export function getRecords(): EligibilityRecord[] {
   if (typeof window === 'undefined') return [];
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -22,20 +22,10 @@ export function getLocalVows(): LocalVow[] {
   }
 }
 
-export function saveLocalVow(vow: LocalVow): void {
-  const vows = getLocalVows();
-  vows.unshift(vow);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(vows));
-}
-
-export function updateLocalVowStatus(commitmentHex: string, fulfilled: boolean, txId?: string): void {
-  const vows = getLocalVows();
-  const target = vows.find((v) => v.commitmentHex === commitmentHex);
-  if (target) {
-    target.fulfilled = fulfilled;
-    if (txId) target.txId = txId;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(vows));
-  }
+export function saveRecord(record: EligibilityRecord): void {
+  const records = getRecords();
+  records.unshift(record);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
 }
 
 export function generateRandomSalt(): Uint8Array {
@@ -64,21 +54,15 @@ export function hexToBytes(hex: string): Uint8Array {
   return bytes;
 }
 
-export async function computeCommitmentHash(goalText: string, salt: Uint8Array): Promise<string> {
+export function computeCommitmentHash(privateValue: number, salt: Uint8Array): string {
   try {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(goalText);
-    const hashBuffer = await globalThis.crypto.subtle.digest('SHA-256', data);
-    const goalTextHash = new Uint8Array(hashBuffer);
-
     const commitment = compactRuntime.persistentCommit(
-      new compactRuntime.CompactTypeBytes(32),
-      goalTextHash,
+      new compactRuntime.CompactTypeUnsignedInteger((2n ** 32n) - 1n, 4),
+      BigInt(privateValue),
       salt
     );
     return bytesToHex(commitment);
   } catch (err) {
-    // Fallback client-side hash computation helper
     return bytesToHex(salt);
   }
 }
