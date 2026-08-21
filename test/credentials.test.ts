@@ -11,106 +11,112 @@ const Credentials = await import(pathToFileURL(contractPath).href);
 
 describe('Confidential Credentials Tests', () => {
   it('Happy path: valid credential passes proveCredentialValid', async () => {
-    // 1. Setup simulated ledger state
-    const validCredentials = new compactRuntime.LedgerMap();
-    const verifiedProofs = new compactRuntime.LedgerMap();
-
-    // 2. Create private witness data (the credential, cred salt, and nullifier salt)
     const rawCredentialBytes = randomBytes(32);
     const credentialSaltBytes = randomBytes(32);
     const nullifierSaltBytes = randomBytes(32);
 
-    // Provide witness callback
-    const witnessProvider = {
-      credential: () => rawCredentialBytes,
-      credentialSalt: () => credentialSaltBytes,
-      nullifierSalt: () => nullifierSaltBytes,
+    const witnesses = {
+      credential: (context) => [context.privateState, rawCredentialBytes],
+      credentialSalt: (context) => [context.privateState, credentialSaltBytes],
+      nullifierSalt: (context) => [context.privateState, nullifierSaltBytes],
     };
 
-    // 3. Issue the credential
-    const issueContext = new compactRuntime.CircuitContext(
-      {
-        validCredentials,
-        verifiedProofs,
-      },
-      witnessProvider
+    const contract = new Credentials.Contract(witnesses);
+    const constructorContext = {
+      initialPrivateState: {},
+      initialZswapLocalState: { coinPublicKey: new Uint8Array(32) },
+    };
+
+    const initialStateResult = contract.initialState(constructorContext);
+    let contractState = initialStateResult.currentContractState;
+
+    let circuitContext = {
+      currentQueryContext: new compactRuntime.QueryContext(
+        contractState.data,
+        compactRuntime.dummyContractAddress(),
+      ),
+      currentPrivateState: initialStateResult.currentPrivateState,
+      currentZswapLocalState: initialStateResult.currentZswapLocalState,
+      costModel: compactRuntime.CostModel.initialCostModel(),
+    };
+
+    // 1. Issue the credential
+    let res = contract.circuits.issueCredential(circuitContext);
+    circuitContext = res.context;
+    assert.ok(res, 'issueCredential circuit execution returned result');
+
+    const expectedCommitment = compactRuntime.persistentCommit(
+      new compactRuntime.CompactTypeBytes(32),
+      rawCredentialBytes,
+      credentialSaltBytes,
     );
 
-    const issueResult = await Credentials.circuits.issueCredential(issueContext);
-    assert.strictEqual(issueResult.transaction.isSuccess, true, 'Issue circuit should succeed');
-    
-    // Apply state changes from issue
-    for (const change of issueResult.stateChanges) {
-      if (change.tag === 'insert') {
-        validCredentials.insert(change.key, change.value);
-      }
-    }
+    let ledgerState = Credentials.ledger(circuitContext.currentQueryContext.state);
+    assert.ok(ledgerState.validCredentials.member(expectedCommitment), 'validCredentials map contains commitment');
+    assert.strictEqual(ledgerState.validCredentials.lookup(expectedCommitment), true, 'credential is valid');
 
-    // 4. Prove the credential is valid
-    const proveContext = new compactRuntime.CircuitContext(
-      {
-        validCredentials,
-        verifiedProofs,
-      },
-      witnessProvider
+    // 2. Prove the credential is valid
+    let proveRes = contract.circuits.proveCredentialValid(circuitContext);
+    circuitContext = proveRes.context;
+    assert.ok(proveRes, 'proveCredentialValid circuit execution returned result');
+
+    ledgerState = Credentials.ledger(circuitContext.currentQueryContext.state);
+    const expectedNullifier = compactRuntime.persistentCommit(
+      new compactRuntime.CompactTypeBytes(32),
+      rawCredentialBytes,
+      nullifierSaltBytes,
     );
+    assert.ok(ledgerState.verifiedProofs.member(expectedNullifier), 'verifiedProofs map contains nullifier');
 
-    const proveResult = await Credentials.circuits.proveCredentialValid(proveContext);
-    assert.strictEqual(proveResult.transaction.isSuccess, true, 'Prove circuit should succeed');
-    
-    // Privacy boundary assertions: ensure the raw credential is not in the transaction output
-    const txStateChangesStr = JSON.stringify(proveResult.stateChanges);
+    // Privacy boundary assertions
+    const txStateChangesStr = JSON.stringify(proveRes.stateChanges || []);
     const rawCredentialHex = rawCredentialBytes.toString('hex');
-    
     assert.strictEqual(
       txStateChangesStr.includes(rawCredentialHex), 
       false, 
       'Raw credential must not leak in state changes'
     );
-    
-    // Calculate the original commitment and verify it's NOT in the prove result state changes
-    // (proveCredentialValid only discloses the nullifier, not the commitment it checked)
-    const commitment = compactRuntime.persistentCommit(
-      new compactRuntime.CompactTypeBytes(32),
-      rawCredentialBytes,
-      credentialSaltBytes
-    );
-    
     assert.strictEqual(
-      txStateChangesStr.includes(Buffer.from(commitment).toString('hex')),
+      txStateChangesStr.includes(Buffer.from(expectedCommitment).toString('hex')),
       false,
       'Original commitment must not leak in proof state changes'
     );
   });
 
   it('Edge case: unissued credential fails proveCredentialValid', async () => {
-    const validCredentials = new compactRuntime.LedgerMap();
-    const verifiedProofs = new compactRuntime.LedgerMap();
-
     const rawCredentialBytes = randomBytes(32);
     const credentialSaltBytes = randomBytes(32);
     const nullifierSaltBytes = randomBytes(32);
 
-    const witnessProvider = {
-      credential: () => rawCredentialBytes,
-      credentialSalt: () => credentialSaltBytes,
-      nullifierSalt: () => nullifierSaltBytes,
+    const witnesses = {
+      credential: (context) => [context.privateState, rawCredentialBytes],
+      credentialSalt: (context) => [context.privateState, credentialSaltBytes],
+      nullifierSalt: (context) => [context.privateState, nullifierSaltBytes],
     };
 
-    const proveContext = new compactRuntime.CircuitContext(
-      {
-        validCredentials,
-        verifiedProofs,
-      },
-      witnessProvider
-    );
+    const contract = new Credentials.Contract(witnesses);
+    const initialStateResult = contract.initialState({
+      initialPrivateState: {},
+      initialZswapLocalState: { coinPublicKey: new Uint8Array(32) },
+    });
+
+    let circuitContext = {
+      currentQueryContext: new compactRuntime.QueryContext(
+        initialStateResult.currentContractState.data,
+        compactRuntime.dummyContractAddress(),
+      ),
+      currentPrivateState: initialStateResult.currentPrivateState,
+      currentZswapLocalState: initialStateResult.currentZswapLocalState,
+      costModel: compactRuntime.CostModel.initialCostModel(),
+    };
 
     // Attempt to prove without issuing first
-    try {
-      await Credentials.circuits.proveCredentialValid(proveContext);
-      assert.fail('Proof should fail for an unissued credential');
-    } catch (e) {
-      assert.ok(e.message.includes('Assertion failed') || e.message.includes('Credential is not registered') || e.message.includes('Execution failed'), 'Circuit correctly rejected unissued credential');
-    }
+    assert.throws(
+      () => {
+        contract.circuits.proveCredentialValid(circuitContext);
+      },
+      /Credential is not registered|Execution failed/,
+      'Circuit correctly rejected unissued credential'
+    );
   });
 });
