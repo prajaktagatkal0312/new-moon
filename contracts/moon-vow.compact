@@ -19,6 +19,7 @@ witness salt(): Bytes<32>;
  */
 export circuit proveEligibility(): [] {
     
+    const THRESHOLD: Uint<32> = 18;
     const val = privateValue();
     const s = salt();
     
