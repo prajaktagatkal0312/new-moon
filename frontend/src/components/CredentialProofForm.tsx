@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Shield, Key, FileCheck2, Loader2, Search } from 'lucide-react';
-import type { CoinInfo, TokenBalance } from '@midnight-ntwrk/wallet-sdk';
 
 export function CredentialProofForm({ 
   onProve, 

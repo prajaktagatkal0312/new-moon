@@ -23,11 +23,11 @@ jobs:
         
       - name: Install Compact Compiler
         run: |
-          wget https://github.com/midnight-ntwrk/compact/releases/download/v0.31.1/compactc-linux-amd64
-          chmod +x compactc-linux-amd64
-          sudo mv compactc-linux-amd64 /usr/local/bin/compactc
-          # Create an alias so 'compact compile' works like on the dev's machine
-          sudo ln -s /usr/local/bin/compactc /usr/local/bin/compact
+          curl --proto '=https' --tlsv1.2 -LsSf https://github.com/midnightntwrk/compact/releases/latest/download/compact-installer.sh | sh
+          echo "$HOME/.compact/bin" >> $GITHUB_PATH
+          
+      - name: Update Compact Compiler
+        run: compact update
           
       - name: Compile MoonVow Contract
         run: npm run compile
