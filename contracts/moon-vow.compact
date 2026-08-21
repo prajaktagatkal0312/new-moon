@@ -6,7 +6,7 @@ import CompactStandardLibrary;
 export ledger verifications: Map<Bytes<32>, Boolean>;
 
 // Deploy-time fixed threshold
-const THRESHOLD: Uint<32> = 18;
+
 
 // Private witness declarations — resolved locally on client machine
 witness privateValue(): Uint<32>;
@@ -18,6 +18,7 @@ witness salt(): Bytes<32>;
  * and commits the boolean result to public state if successful.
  */
 export circuit proveEligibility(): [] {
+    
     const val = privateValue();
     const s = salt();
     
