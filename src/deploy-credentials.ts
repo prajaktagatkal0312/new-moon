@@ -77,7 +77,11 @@ if (!fs.existsSync(contractPath)) {
 const Credentials = await import(pathToFileURL(contractPath).href);
 
 const compiledContract = CompiledContract.make('credentials', Credentials.Contract).pipe(
-  
+  CompiledContract.withWitnesses({
+    credential: () => [{}, new Uint8Array(32)],
+    credentialSalt: () => [{}, new Uint8Array(32)],
+    nullifierSalt: () => [{}, new Uint8Array(32)],
+  }),
   CompiledContract.withCompiledFileAssets(zkConfigPath),
 );
 
@@ -291,13 +295,7 @@ async function main() {
       // conditional args type widens to any[] and an explicit [] is required.)
       deployed = await deployContract(providers, {
         compiledContract: compiledContract as any,
-        args: [
-          {
-            credential: () => [{}, new Uint8Array(32)],
-            credentialSalt: () => [{}, new Uint8Array(32)],
-            nullifierSalt: () => [{}, new Uint8Array(32)],
-          }
-        ],
+        args: [],
         privateStateId: PRIVATE_STATE_ID,
         initialPrivateState: {},
       });
