@@ -43,15 +43,8 @@ jobs:
       - name: Run Credentials Tests
         run: npm run test:credentials
 
-      - name: Commit compiled credentials
-        run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add contracts/managed/credentials
-          # Check if there are changes to commit
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "chore: commit compiled credentials contract"
-            git push
-          fi
+      - name: Upload compiled credentials
+        uses: actions/upload-artifact@v4
+        with:
+          name: compiled-credentials
+          path: contracts/managed/credentials
