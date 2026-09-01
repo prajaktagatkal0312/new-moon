@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
 import { PrivacyPanel } from './components/PrivacyPanel';
-import { CredentialProofForm } from './components/CredentialProofForm';
-import { CredentialPrivacyPanel } from './components/CredentialPrivacyPanel';
+
+
 import { CommitVowForm } from './components/CommitVowForm';
 import { FulfillVowList } from './components/FulfillVowList';
 import { useWallet } from './hooks/useWallet';
@@ -10,9 +10,9 @@ import { getLocalVows, saveLocalVow, updateLocalVowStatus, LocalVow } from './ut
 import { ShieldCheck, Moon, Sparkles, CheckCircle2, AlertCircle } from 'lucide-react';
 
 import { Buffer } from 'buffer';
-import { createCredentialsProviders } from './providers';
+
 import { getOrGenerateSalts } from './utils/salts';
-import * as Credentials from './contracts/credentials/index.js';
+
 import { CompiledContract } from '@midnight-ntwrk/midnight-js-protocol/compact-js';
 import { submitCallTx } from '@midnight-ntwrk/midnight-js-contracts';
 import { setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
@@ -86,84 +86,6 @@ export function App() {
     }
   };
 
-  const getContractPipeline = (credentialStr: string) => {
-    const { cSalt, nSalt } = getOrGenerateSalts(credentialStr);
-    const credBytes = new Uint8Array(32);
-    const credStrBytes = Buffer.from(credentialStr, 'utf8');
-    credBytes.set(credStrBytes.slice(0, Math.min(32, credStrBytes.length)));
-
-    return CompiledContract.make('credentials', Credentials.Contract)
-      .pipe(
-        CompiledContract.withWitnesses({
-          credential: (ctx) => [ctx.privateState, credBytes],
-          credentialSalt: (ctx) => [ctx.privateState, cSalt],
-          nullifierSalt: (ctx) => [ctx.privateState, nSalt],
-        })
-      );
-  };
-
-  const handleIssueCredential = async (credentialStr: string) => {
-    setIsCredentialProving(true);
-    try {
-      if (wallet.status !== 'CONNECTED' || !wallet.api) {
-        throw new Error('Wallet not connected');
-      }
-
-      showToast('Preparing provider and proof...', 'success');
-      setNetworkId('TestNet');
-      const unshieldedAddress = (await wallet.api.getUnshieldedAddress()).unshieldedAddress;
-      const providers = await createCredentialsProviders(wallet.api as any, unshieldedAddress, 'TestNet');
-      
-      const compiledContract = getContractPipeline(credentialStr);
-
-      showToast('Submitting issue transaction...', 'success');
-      await submitCallTx(providers as any, {
-        contractAddress: CREDENTIALS_CONTRACT_ADDRESS,
-        compiledContract: compiledContract as any,
-        circuitId: 'issueCredential',
-        args: []
-      });
-
-      showToast(`Credential issued on-chain! Tx submitted.`, 'success');
-    } catch (err: any) {
-      console.error(err);
-      showToast(err?.message || 'Failed to issue credential.', 'error');
-    } finally {
-      setIsCredentialProving(false);
-    }
-  };
-
-  const handleProveCredential = async (credentialStr: string) => {
-    setIsCredentialProving(true);
-    try {
-      if (wallet.status !== 'CONNECTED' || !wallet.api) {
-        throw new Error('Wallet not connected');
-      }
-
-      showToast('Preparing provider and proof...', 'success');
-      setNetworkId('TestNet');
-      const unshieldedAddress = (await wallet.api.getUnshieldedAddress()).unshieldedAddress;
-      const providers = await createCredentialsProviders(wallet.api as any, unshieldedAddress, 'TestNet');
-      
-      const compiledContract = getContractPipeline(credentialStr);
-
-      showToast('Submitting proof transaction...', 'success');
-      await submitCallTx(providers as any, {
-        contractAddress: CREDENTIALS_CONTRACT_ADDRESS,
-        compiledContract: compiledContract as any,
-        circuitId: 'proveCredentialValid',
-        args: []
-      });
-
-      showToast(`Credential validity proven successfully! Tx submitted.`, 'success');
-    } catch (err: any) {
-      console.error(err);
-      showToast(err?.message || 'Failed to prove credential validity.', 'error');
-    } finally {
-      setIsCredentialProving(false);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
       <Navbar
@@ -175,8 +97,8 @@ export function App() {
         connect={wallet.connect}
         disconnect={wallet.disconnect}
         previewAddress={PREVIEW_CONTRACT_ADDRESS}
-        currentTab={activeTab}
-        onTabChange={setActiveTab}
+        
+        
       />
 
       {/* Toast Alert Banner */}
@@ -195,9 +117,7 @@ export function App() {
 
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-8 space-y-8">
-        {activeTab === 'moonvow' ? (
-          <>
-            {/* Hero Banner */}
+{/* Hero Banner */}
             <section className="glass-panel-glow rounded-3xl p-8 lg:p-10 relative overflow-hidden">
               <div className="max-w-3xl relative z-10 space-y-4">
                 <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs font-medium">
@@ -235,18 +155,7 @@ export function App() {
                 isConnected={wallet.status === 'CONNECTED'}
               />
             </section>
-          </>
-        ) : (
-          <div className="max-w-4xl mx-auto space-y-8 mt-4">
-            <CredentialProofForm 
-              onProve={handleProveCredential}
-              onIssue={handleIssueCredential}
-              isProving={isCredentialProving}
-              isConnected={wallet.status === 'CONNECTED'}
-            />
-            <CredentialPrivacyPanel />
-          </div>
-        )}
+
       </main>
 
       {/* Footer */}
@@ -258,3 +167,4 @@ export function App() {
 }
 
 export default App;
+
