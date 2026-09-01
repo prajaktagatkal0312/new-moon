@@ -35,7 +35,9 @@ jobs:
         run: npm test
 
       - name: Build Frontend
-        run: npm --prefix frontend install && npm run frontend:build
+        run: npm --prefix frontend install && npm run frontend:build > frontend-build.log 2>&1
+
+
 
 
 
