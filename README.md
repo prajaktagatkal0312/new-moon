@@ -1,5 +1,7 @@
 # 🌙 MoonVow — Privacy-First Commitment App on Midnight
 
+[![CI](https://github.com/prajaktagatkal0312/new-moon/actions/workflows/ci.yml/badge.svg)](https://github.com/prajaktagatkal0312/new-moon/actions/workflows/ci.yml)
+
 > **MoonVow** is a privacy-first personal commitment tracking application built on the **Midnight Network**. Users commit to personal goals at the "new moon"—the fact that they made a vow becomes public on-chain, but the content of the vow stays completely private off-chain. Later, the user can mark their goal fulfilled without ever revealing what the vow was. MoonVow serves as the foundational step toward a broader "phases of commitment" ecosystem (enabling reveal-at-fulfillment, commitment streaks, and social accountability without doxxing your personal goals).
 
 ---
@@ -146,9 +148,12 @@ export circuit commitVow(): [] {
  ├── Recompute Hash(Goal, Salt) ──────────disclose(Hash)──> [ vows[Hash] = true  ]
 ```
 
-### What a Third Party Can & Cannot Learn:
-- ✅ **Can Learn**: That a new commitment was made at a specific block height, the total number of global vows (`vowCount`), and whether commitment hash `0x...` is fulfilled.
-- ❌ **Cannot Learn**: The goal text, the salt, who created the goal, or any relationship between two vows.
+## Privacy Model
+
+- **What an observer CAN learn**: A commitment existed, the commitment hash, the fulfilled status, the block height, and the global owCount.
+- **What an observer CANNOT learn**: The goal text, the salt, or any identity linkage between vows.
+
+To verify this yourself, view the contract on the [Preview Explorer](https://preview.midnightexplorer.com/contracts/e9cc9a964372b4d8d1a4bcd839cc70d8055be22fb2d2622616e107dd46059944) and inspect any commitVow transaction — you'll see only the 32-byte hash commitment in the public state. The goal text and salt are absent from all on-chain data, indexer records, and transaction payloads.
 
 ---
 

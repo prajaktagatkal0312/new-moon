@@ -6,7 +6,7 @@
 //
 // Why: without persistence, every `npm run deploy` / `npm run cli` rebuilds
 // each child wallet from seed and re-syncs against the chain. On public
-// networks (preview, preprod) that's minutes per run — and painful on retries
+// networks (preview) that's minutes per run — and painful on retries
 // after a transient failure. The SDK exposes serializeState() and restore()
 // on each child wallet class; wallet.ts is the glue that uses them, and this
 // file is the on-disk format underneath.

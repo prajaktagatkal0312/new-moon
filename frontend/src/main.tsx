@@ -1,3 +1,7 @@
+import { Buffer } from 'buffer';
+if (typeof window !== 'undefined' && !window.Buffer) {
+  window.Buffer = Buffer;
+}
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import '@midnight-ntwrk/dapp-connector-api';

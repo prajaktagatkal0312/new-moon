@@ -111,7 +111,7 @@ export const PrivacyPanel: React.FC<PrivacyPanelProps> = ({
                   rel="noopener noreferrer"
                   className="w-full flex items-center justify-center space-x-2 py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800/80 border border-cyan-500/30 text-cyan-300 text-xs font-medium transition-all group"
                 >
-                  <span>Verify Commitment on Preprod Explorer</span>
+                  <span>Verify Commitment on Preview Explorer</span>
                   <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                 </a>
               </div>

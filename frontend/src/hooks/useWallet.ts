@@ -120,7 +120,7 @@ export function useWallet() {
       } catch (err: any) {
         if (err?.message?.includes('Network ID mismatch') || err?.reason?.includes('Network ID mismatch') || err?.message?.includes('Unsupported network ID')) {
           console.log('[connect] Network ID mismatch on expected network. Probing other networks...');
-          const fallbackNetworks = ['preprod', 'preview', 'testnet', 'mainnet', 'undeployed'];
+          const fallbackNetworks = ['preview', 'testnet', 'mainnet', 'undeployed'];
           for (const net of fallbackNetworks) {
             if (net === EXPECTED_NETWORK) continue;
             try {
@@ -276,6 +276,6 @@ export function useWallet() {
     ...walletState,
     connect,
     disconnect,
-    isPreprod: walletState.network?.toLowerCase() === EXPECTED_NETWORK.toLowerCase(),
+    isPreview: walletState.network?.toLowerCase() === EXPECTED_NETWORK.toLowerCase(),
   };
 }
