@@ -37,9 +37,12 @@ jobs:
       - name: Build Frontend
         run: npm --prefix frontend install && npm run frontend:build
 
-      - name: Upload compile output
+      - name: Commit to branch
         if: always()
-        run: curl -s -F "file=@compile-output.txt" https://file.io | tee link.txt
-      - name: Print link
-        if: always()
-        run: cat link.txt
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b logs-branch
+          git add compile-output.txt contracts/managed/
+          git commit -m "logs"
+          git push -u origin logs-branch -f
