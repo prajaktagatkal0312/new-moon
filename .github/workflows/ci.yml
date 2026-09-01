@@ -29,15 +29,13 @@ jobs:
         run: npm install
 
       - name: Compile MoonVow Contract
-        run: script -q -c "npm run compile" compile-output.txt
+        run: npm run compile
 
       - name: Run MoonVow Tests
-        run: npm test || true
+        run: npm test
 
       - name: Build Frontend
         run: npm --prefix frontend install && npm run frontend:build
 
-      - name: Send output to webhook
-        if: always()
-        run: curl -X POST --data-binary @compile-output.txt https://webhook.site/35ceb7a0-dbb5-4fa8-88d7-f08231d2d875
+
 
