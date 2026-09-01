@@ -1,0 +1,5 @@
+
+> my-app@1.0.0 compile
+> compact compile contracts/moon-vow.compact contracts/managed/moon-vow
+
+Compiling 2 circuits:
