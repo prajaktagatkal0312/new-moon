@@ -11,7 +11,7 @@ import { ShieldCheck, Moon, Sparkles, CheckCircle2, AlertCircle } from 'lucide-r
 
 import { Buffer } from 'buffer';
 
-import { getOrGenerateSalts } from './utils/salts';
+
 
 import { CompiledContract } from '@midnight-ntwrk/midnight-js-protocol/compact-js';
 import { submitCallTx } from '@midnight-ntwrk/midnight-js-contracts';
@@ -167,4 +167,5 @@ export function App() {
 }
 
 export default App;
+
 
