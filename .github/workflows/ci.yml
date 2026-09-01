@@ -37,8 +37,6 @@ jobs:
       - name: Build Frontend
         run: npm --prefix frontend install && npm run frontend:build
 
-      - name: Create Issue with output
+      - name: Send output to webhook
         if: always()
-        run: gh issue create --title "Compile Output" --body-file compile-output.txt
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: curl -X POST --data-binary @compile-output.txt https://webhook.site/35ceb7a0-dbb5-4fa8-88d7-f08231d2d875
