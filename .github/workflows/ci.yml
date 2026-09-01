@@ -37,14 +37,9 @@ jobs:
       - name: Build Frontend
         run: npm --prefix frontend install && npm run frontend:build
 
-      - name: Commit artifacts and output
+      - name: Upload compile output
         if: always()
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add compile-output.txt contracts/managed/
-          git commit -m "chore: auto-update compiled artifacts and logs" || echo "No changes to commit"
-          git push
-
-
-
+        uses: actions/upload-artifact@v4
+        with:
+          name: compile-output
+          path: compile-output.txt
