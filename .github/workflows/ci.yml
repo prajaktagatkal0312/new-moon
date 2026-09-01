@@ -42,3 +42,11 @@ jobs:
 
 
 
+
+      - name: Upload Logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: frontend-build.log
+
