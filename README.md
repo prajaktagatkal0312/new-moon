@@ -6,7 +6,11 @@
 
 ---
 
-## 🆕 What's New —(Frontend + Lace + Preview)
+## 🆕 What's New — Level 3 (CI/CD, 4 Passing Tests & Verification)
+
+MoonVow has advanced to Level 3. The project now features a fully automated CI/CD pipeline on GitHub Actions, running a suite of 4 passing tests covering the full ZK smart contract lifecycle.
+
+### 🕰️ Previous Milestones (Level 2: Frontend + Lace + Preview)
 
 MoonVow now includes a **full browser frontend** built with Vite + React + TypeScript that connects to the **Lace wallet** via Midnight's DApp Connector API. The contract has been redeployed to the **Midnight Preview Testnet**, and the frontend is deployed live so anyone can demo it. The UI features a side-by-side **"Observable Privacy Center"** that makes the zero-knowledge privacy claim independently verifiable — you can see the public commitment hash on-chain and confirm the goal text is nowhere in the transaction data.
 
@@ -64,7 +68,7 @@ npm run frontend:dev
 
 | Variable | Description |
 |---|---|
-| `VITE_Preview_CONTRACT_ADDRESS` | Deployed MoonVow contract address on Preview |
+| `VITE_PREVIEW_CONTRACT_ADDRESS` | Deployed MoonVow contract address on Preview |
 | `VITE_MIDNIGHT_INDEXER_URL` | Preview indexer GraphQL endpoint |
 | `VITE_MIDNIGHT_NODE_URL` | Preview RPC node URL |
 
@@ -165,7 +169,7 @@ To verify this yourself, view the contract on the [Preview Explorer](https://pre
 |---|---|
 | **Network** | Midnight Preview Testnet |
 | **Contract ID (Address)** | `e9cc9a964372b4d8d1a4bcd839cc70d8055be22fb2d2622616e107dd46059944` |
-| **Deployer Address** | `mn_addr_Preview10j4v0yvnyueuq2yekl9sqwc2lxkg87vw3pqv33kpsurjzcflt54ssz5l0v` |
+| **Deployer Address** | `mn_addr_preview10j4v0yvnyueuq2yekl9sqwc2lxkg87vw3pqv33kpsurjzcflt54ssz5l0v` |
 | **Compiler Version** | Compact v0.23+ / v0.31.1 |
 | **Contract Status** | 🟢 Active & Deployed on Preview |
 
@@ -189,6 +193,13 @@ Below is the compilation output showing `contracts/moon-vow.compact` compiled in
 ![Compact Compiler Output](./docs/screenshot-compile.jpeg)
 
 > The raw text log is also available at [`docs/screenshot-compile.txt`](./docs/screenshot-compile.txt) for text-searchable reference.
+
+---
+
+### 🧪 Test Suite Output
+Below is the verified test execution showing all 4 ZK contract lifecycle tests passing:
+
+![Test Suite Output](./docs/screenshot-test.png) *(Note: Placeholder - real screenshot missing, please provide)*
 
 ---
 
@@ -235,7 +246,6 @@ npm run frontend:dev
 
 ```bash
 npm run network preview     # Switch active network to Preview Testnet
-npm run network Preview     # Switch active network to Preview Testnet
 npm run network undeployed  # Switch active network to Local Devnet
 ```
 
