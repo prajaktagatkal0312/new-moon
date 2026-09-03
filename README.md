@@ -163,7 +163,7 @@ To verify this yourself, view the contract on the [Preview Explorer](https://pre
 
 ## 📜 Mainnet / Testnet Contract Details
 
-### 🧪 Midnight Preview Testnet Deployment (Level 2 — Current)
+### 🧪 Midnight Preview Testnet Deployment (Active Contract — deployed at Level 2, still in use)
 
 | Parameter | Details |
 |---|---|
