@@ -6,7 +6,7 @@
 
 ---
 
-## 🆕 What's New — Level 2 (Frontend + Lace + Preview)
+## 🆕 What's New —(Frontend + Lace + Preview)
 
 MoonVow now includes a **full browser frontend** built with Vite + React + TypeScript that connects to the **Lace wallet** via Midnight's DApp Connector API. The contract has been redeployed to the **Midnight Preview Testnet**, and the frontend is deployed live so anyone can demo it. The UI features a side-by-side **"Observable Privacy Center"** that makes the zero-knowledge privacy claim independently verifiable — you can see the public commitment hash on-chain and confirm the goal text is nowhere in the transaction data.
 
