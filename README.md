@@ -11,9 +11,9 @@
 
 ## 💡 Product Proposal
 
-**Selected Idea:** *(Pending official submission — see [`docs/PROPOSAL.md`](./docs/PROPOSAL.md))*
+**Selected Idea:** MoonVow — Privacy-First Personal Commitment Tracker
 
-Traditional goal-tracking platforms either force you to expose your personal ambitions publicly or rely on centralized servers. MoonVow serves as a privacy-first personal commitment tracking application leveraging Midnight Network's Zero-Knowledge (ZK) smart contracts written in Compact to give users cryptographic proof of commitment with complete privacy. Users can privately commit to personal goals, cryptographically prove they completed a previously registered vow, and lay the foundation for future expansions like reveal-on-completion, proof-of-streak, and zero-knowledge social accountability circles.
+Traditional goal-tracking platforms either force you to expose your personal ambitions publicly or rely on centralized servers. MoonVow implements a privacy-first personal commitment tracking application, leveraging Midnight Network's Zero-Knowledge (ZK) smart contracts written in Compact to give users cryptographic proof of commitment with complete privacy. Users privately commit to personal goals, and can later cryptographically prove they completed a previously registered vow — without ever revealing what the goal was — laying the foundation for future expansions like reveal-on-completion, proof-of-streak, and zero-knowledge social accountability circles.
 
 ---
 
