@@ -28,15 +28,25 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Install screenshot tools
+        run: sudo apt-get update && sudo apt-get install -y aha wkhtmltopdf
+
       - name: Compile MoonVow Contract
-        run: npm run compile
+        run: npm run compile 2>&1 | tee compile-output.txt
+
+      - name: Generate compile screenshot PNG
+        run: |
+          cat compile-output.txt | aha --no-header > compile-output.html
+          wkhtmltoimage --width 800 --quality 100 compile-output.html docs/screenshot-compile.png
+
+      - name: Upload compile screenshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: compile-screenshot
+          path: docs/screenshot-compile.png
 
       - name: Run MoonVow Tests
         run: npm test
 
       - name: Build Frontend
         run: npm --prefix frontend install && npm run frontend:build
-
-
-
-

@@ -186,7 +186,9 @@ To verify this yourself, view the contract on the [Preview Explorer](https://pre
 ### ⚙️ Compact Compiler Output
 Below is the compilation output showing `contracts/moon-vow.compact` compiled into `contracts/managed/moon-vow` with `commitVow` and `fulfillVow` circuits:
 
-![Compact Compiler Output](./docs/screenshot-compile.txt)
+![Compact Compiler Output](./docs/screenshot-compile.png)
+
+> The raw text log is also available at [`docs/screenshot-compile.txt`](./docs/screenshot-compile.txt) for text-searchable reference.
 
 ---
 
