@@ -186,7 +186,7 @@ To verify this yourself, view the contract on the [Preview Explorer](https://pre
 ### ⚙️ Compact Compiler Output
 Below is the compilation output showing `contracts/moon-vow.compact` compiled into `contracts/managed/moon-vow` with `commitVow` and `fulfillVow` circuits:
 
-![Compact Compiler Output](./docs/screenshot-compile.png)
+![Compact Compiler Output](./docs/screenshot-compile.jpeg)
 
 > The raw text log is also available at [`docs/screenshot-compile.txt`](./docs/screenshot-compile.txt) for text-searchable reference.
 
@@ -249,7 +249,7 @@ my-app/
 │   ├── moon-vow.compact         # Compact ZK smart contract source
 │   └── managed/moon-vow/        # Compiled circuits, keys, and JS bindings
 ├── docs/
-│   ├── screenshot-compile.png   # Terminal compilation output screenshot
+│   ├── screenshot-compile.jpeg   # Terminal compilation output screenshot
 │   └── screenshot-deploy.png    # Terminal deployment screenshot
 ├── frontend/                    # ✨ Level 2: Vite + React + TypeScript frontend
 │   ├── src/
@@ -288,4 +288,5 @@ my-app/
 ├── package.json
 └── README.md
 ```
+
 
