@@ -150,7 +150,7 @@ export circuit commitVow(): [] {
 
 ## Privacy Model
 
-- **What an observer CAN learn**: A commitment existed, the commitment hash, the fulfilled status, the block height, and the global owCount.
+- **What an observer CAN learn**: A commitment existed, the commitment hash, the fulfilled status, the block height, and the global vowCount.
 - **What an observer CANNOT learn**: The goal text, the salt, or any identity linkage between vows.
 
 To verify this yourself, view the contract on the [Preview Explorer](https://preview.midnightexplorer.com/contracts/e9cc9a964372b4d8d1a4bcd839cc70d8055be22fb2d2622616e107dd46059944) and inspect any commitVow transaction — you'll see only the 32-byte hash commitment in the public state. The goal text and salt are absent from all on-chain data, indexer records, and transaction payloads.
@@ -288,5 +288,6 @@ my-app/
 ├── package.json
 └── README.md
 ```
+
 
 
