@@ -9,6 +9,16 @@
 
 ---
 
+## 🚀 Deployed Contract Status
+
+- **Deployment Network:** Midnight Preview Testnet
+- **Contract Address:** `e9cc9a964372b4d8d1a4bcd839cc70d8055be22fb2d2622616e107dd46059944`
+- **Block Explorer / Deploy Tx:** [View Contract on Midnight Explorer](https://preview.midnightexplorer.com/contracts/e9cc9a964372b4d8d1a4bcd839cc70d8055be22fb2d2622616e107dd46059944) *(The original deployment transaction hash and state history are visible directly on this page).*
+
+*(Note: A Preprod deployment was attempted but blocked by an SDK wallet-sync issue on Windows; not required for this submission).*
+
+---
+
 ## 💡 Product Proposal
 
 **Selected Idea:** MoonVow — Privacy-First Personal Commitment Tracker

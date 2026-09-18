@@ -65,3 +65,23 @@ midnight-level-db/
 # Frontend build artifacts
 frontend/dist/
 frontend/node_modules/
+
+# Compiled contract credentials (binary WASM, public keys, zk-IR)
+contracts/managed/credentials/
+compiled-credentials.zip
+managed.zip
+
+# Debug / temporary archives
+artifact.zip
+build-logs.zip
+
+# Miscellaneous helper/debug files
+hex.txt
+jobs.json
+logs.txt
+installer.sh
+extract/
+frontend/test-render.js
+test-preview.mjs
+fetch-graphql.mjs
+patch*.cjs

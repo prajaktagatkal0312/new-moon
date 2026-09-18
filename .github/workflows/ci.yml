@@ -50,3 +50,21 @@ jobs:
 
       - name: Build Frontend
         run: npm --prefix frontend install && npm run frontend:build
+
+      - name: Verify no fabricated contract calls
+        run: |
+          if grep -rn 'callContract' frontend/src/; then
+            echo "❌ Found fabricated callContract() calls in frontend"
+            exit 1
+          fi
+          if grep -rn 'tx_\${Date.now' frontend/src/; then
+            echo "❌ Found fabricated txId generation in frontend"
+            exit 1
+          fi
+          echo "✅ No anti-patterns found"
+
+      - name: Run E2E Integration Check
+        run: |
+          docker compose up -d --wait
+          npm run test:e2e
+        timeout-minutes: 10

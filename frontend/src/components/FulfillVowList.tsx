@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { CheckCircle2, Circle, Loader2, Sparkles, AlertCircle, ShieldCheck } from 'lucide-react';
-import { LocalVow } from '../utils/vowStorage';
+import { LocalVow, hexToBytes } from '../utils/vowStorage';
 
 interface FulfillVowListProps {
   vows: LocalVow[];
+  onChainVows: any;
   activeVowId: string | null;
   onSelectVow: (vow: LocalVow) => void;
   onFulfill: (vow: LocalVow) => Promise<void>;
@@ -13,6 +14,7 @@ interface FulfillVowListProps {
 
 export const FulfillVowList: React.FC<FulfillVowListProps> = ({
   vows,
+  onChainVows,
   activeVowId,
   onSelectVow,
   onFulfill,
@@ -59,6 +61,15 @@ export const FulfillVowList: React.FC<FulfillVowListProps> = ({
           {vows.map((vow) => {
             const isSelected = vow.id === activeVowId;
             const isFulfilling = vow.id === fulfillingId;
+            let isFulfilled = vow.fulfilled;
+            try {
+              if (onChainVows) {
+                 isFulfilled = onChainVows.lookup(hexToBytes(vow.commitmentHex));
+              }
+            } catch (e) {
+              // Not found in map means unfulfilled or not committed yet
+              isFulfilled = false;
+            }
 
             return (
               <div
@@ -73,7 +84,7 @@ export const FulfillVowList: React.FC<FulfillVowListProps> = ({
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1">
                     <div className="flex items-center space-x-2 mb-1">
-                      {vow.fulfilled ? (
+                      {isFulfilled ? (
                         <span className="flex items-center space-x-1 text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 rounded-md">
                           <CheckCircle2 className="w-3.5 h-3.5" />
                           <span>Fulfilled</span>
@@ -98,7 +109,7 @@ export const FulfillVowList: React.FC<FulfillVowListProps> = ({
                     </p>
                   </div>
 
-                  {!vow.fulfilled && (
+                  {!isFulfilled && (
                     <button
                       onClick={(e) => handleFulfillClick(vow, e)}
                       disabled={!isConnected || isFulfilling || disabled}

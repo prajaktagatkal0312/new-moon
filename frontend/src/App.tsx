@@ -13,11 +13,10 @@ import { Buffer } from 'buffer';
 
 
 
-import { CompiledContract } from '@midnight-ntwrk/midnight-js-protocol/compact-js';
-import { submitCallTx } from '@midnight-ntwrk/midnight-js-contracts';
-import { setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
+import { getOrJoinContract } from './contract/contractInstance';
+import { queryLedgerState } from './contract/ledgerQueries';
 
-const PREVIEW_CONTRACT_ADDRESS = import.meta.env.VITE_PREVIEW_CONTRACT_ADDRESS || 'e9cc9a964372b4d8d1a4bcd839cc70d8055be22fb2d2622616e107dd46059944';
+const PREVIEW_CONTRACT_ADDRESS = import.meta.env.VITE_PREVIEW_CONTRACT_ADDRESS || import.meta.env.VITE_CONTRACT_ADDRESS || 'e9cc9a964372b4d8d1a4bcd839cc70d8055be22fb2d2622616e107dd46059944';
 const CREDENTIALS_CONTRACT_ADDRESS = import.meta.env.VITE_CREDENTIALS_CONTRACT_ADDRESS || '7444c091bdec7cbea42ac075006178a4c6baa8c3d211f82f3a4004f6191e5d37';
 
 export function App() {
@@ -25,6 +24,7 @@ export function App() {
   const [localVows, setLocalVows] = useState<LocalVow[]>([]);
   const [activeVow, setActiveVow] = useState<LocalVow | null>(null);
   const [vowCount, setVowCount] = useState<bigint>(1n);
+  const [onChainVows, setOnChainVows] = useState<any>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [activeTab, setActiveTab] = useState<'moonvow' | 'credentials'>('moonvow');
   const [isCredentialProving, setIsCredentialProving] = useState(false);
@@ -42,25 +42,55 @@ export function App() {
     setTimeout(() => setToast(null), 5000);
   };
 
+  const fetchLedger = async () => {
+    const state = await queryLedgerState(PREVIEW_CONTRACT_ADDRESS);
+    if (state) {
+      setVowCount(state.vowCount);
+      setOnChainVows(state.vows);
+    }
+  };
+
+  useEffect(() => {
+    fetchLedger();
+    const interval = setInterval(fetchLedger, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
   const handleCommitVow = async (newVow: LocalVow) => {
     try {
-      if (wallet.status === 'CONNECTED' && (wallet.api as any)?.callContract) {
-        const tx = await (wallet.api as any).callContract('commitVow', {
-          goalTextHash: Array.from(new Uint8Array(await globalThis.crypto.subtle.digest('SHA-256', new TextEncoder().encode(newVow.goalText)))).map(b => b.toString(16).padStart(2, '0')).join(''),
-          salt: newVow.saltHex,
-        });
-        newVow.txId = tx?.txId || `tx_${Date.now().toString(16)}`;
-      } else {
-        newVow.txId = `tx_${Date.now().toString(16)}`;
+      if (wallet.status !== 'CONNECTED' || !wallet.api) {
+        showToast('Connect your wallet before committing a vow.', 'error');
+        return;
       }
 
+      const { contract, providers } = await getOrJoinContract(wallet.api, wallet.address!, wallet.network!);
+      
+      const goalTextHashBytes = new Uint8Array(await globalThis.crypto.subtle.digest('SHA-256', new TextEncoder().encode(newVow.goalText)));
+      const saltBytes = Buffer.from(newVow.saltHex, 'hex');
+
+      // Set witnesses in private state
+      await providers.privateStateProvider.set('moonVowPrivateState', {
+        goalTextHash: goalTextHashBytes,
+        salt: saltBytes,
+      });
+
+      const txResult = await contract.callTx.commitVow();
+      const txHash = txResult.public.txHash;
+      if (!txHash) throw new Error('Transaction did not return a valid hash');
+
+      newVow.txId = txHash;
       saveLocalVow(newVow);
+      
       const updated = getLocalVows();
       setLocalVows(updated);
       setActiveVow(newVow);
-      setVowCount((prev) => prev + 1n);
 
       showToast(`Vow commitment posted to chain! Hash: ${newVow.commitmentHex.slice(0, 12)}...`, 'success');
+      
+      // Update ledger state
+      const state = await queryLedgerState(PREVIEW_CONTRACT_ADDRESS);
+      if (state) setVowCount(state.vowCount);
+      
     } catch (err: any) {
       showToast(err?.message || 'Failed to submit commitment proof.', 'error');
       throw err;
@@ -69,13 +99,27 @@ export function App() {
 
   const handleFulfillVow = async (vow: LocalVow) => {
     try {
-      if (wallet.status === 'CONNECTED' && (wallet.api as any)?.callContract) {
-        await (wallet.api as any).callContract('fulfillVow', {
-          commitment: vow.commitmentHex,
-        });
+      if (wallet.status !== 'CONNECTED' || !wallet.api) {
+        showToast('Connect your wallet to fulfill a vow.', 'error');
+        return;
       }
 
-      updateLocalVowStatus(vow.commitmentHex, true, vow.txId);
+      const { contract, providers } = await getOrJoinContract(wallet.api, wallet.address!, wallet.network!);
+
+      const goalTextHashBytes = new Uint8Array(await globalThis.crypto.subtle.digest('SHA-256', new TextEncoder().encode(vow.goalText)));
+      const saltBytes = Buffer.from(vow.saltHex, 'hex');
+
+      await providers.privateStateProvider.set('moonVowPrivateState', {
+        goalTextHash: goalTextHashBytes,
+        salt: saltBytes,
+      });
+
+      const txResult = await contract.callTx.fulfillVow();
+      const txHash = txResult.public.txHash;
+      if (!txHash) throw new Error('Transaction did not return a valid hash');
+
+      updateLocalVowStatus(vow.commitmentHex, true, txHash);
+      
       const updated = getLocalVows();
       setLocalVows(updated);
       setActiveVow(updated.find(v => v.id === vow.id) || null);
@@ -149,6 +193,7 @@ export function App() {
 
               <FulfillVowList
                 vows={localVows}
+                onChainVows={onChainVows}
                 activeVowId={activeVow?.id || null}
                 onSelectVow={(vow) => setActiveVow(vow)}
                 onFulfill={handleFulfillVow}
