@@ -84,13 +84,13 @@ export const Navbar: React.FC<NavbarProps> = ({
           ) : status === 'CONNECTING' ? (
             <button disabled className="px-4 py-2 rounded-xl bg-purple-600/50 text-white font-medium text-xs flex items-center space-x-2 cursor-not-allowed">
               <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-              <span>Connecting Lace...</span>
+              <span>Connecting 1am...</span>
             </button>
           ) : status === 'WRONG_NETWORK' ? (
             <div className="flex items-center space-x-2">
               <div className="px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-center space-x-1.5">
                 <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
-                <span>Switch Lace to Preview</span>
+                <span>Switch 1am to Preview</span>
               </div>
               <button
                 onClick={connect}
@@ -101,14 +101,14 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           ) : status === 'NOT_INSTALLED' ? (
             <div className="flex items-center space-x-2">
-              <span className="text-xs text-slate-400">Lace wallet not detected</span>
+              <span className="text-xs text-slate-400">1am wallet not detected</span>
               <a
                 href="https://chromewebstore.google.com/detail/lace-midnight-preview/hgeekaiplokcnmakghbdfbgnlfheichg"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold transition-all flex items-center space-x-1"
               >
-                <span>Install Lace</span>
+                <span>Install 1am</span>
                 <ExternalLink className="w-3 h-3" />
               </a>
             </div>
@@ -131,7 +131,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold text-xs shadow-lg shadow-purple-500/25 flex items-center space-x-2 transition-all active:scale-95"
             >
               <Wallet className="w-4 h-4" />
-              <span>Connect Lace Wallet</span>
+              <span>Connect 1am Wallet</span>
             </button>
           )}
         </div>

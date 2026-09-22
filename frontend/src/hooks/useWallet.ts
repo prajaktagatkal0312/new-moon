@@ -94,7 +94,7 @@ export function useWallet() {
       setWalletState((prev) => ({
         ...prev,
         status: 'NOT_INSTALLED',
-        error: 'Lace wallet extension is not installed.',
+        error: '1am wallet extension is not installed.',
       }));
       return;
     }
@@ -104,7 +104,7 @@ export function useWallet() {
       setWalletState((prev) => ({
         ...prev,
         status: 'NOT_INSTALLED',
-        error: "Lace wallet detected but its API isn't ready — try reloading the page.",
+        error: "1am wallet detected but its API isn't ready — try reloading the page.",
       }));
       return;
     }
@@ -173,7 +173,7 @@ export function useWallet() {
         address: unshieldedAddress,
         network,
         balance,
-        error: isWrong ? `Please switch Lace network to ${EXPECTED_NETWORK}.` : null,
+        error: isWrong ? `Please switch 1am network to ${EXPECTED_NETWORK}.` : null,
         api,
       });
 
@@ -182,11 +182,11 @@ export function useWallet() {
       console.error('[connect] connect() rejected/threw:', err);
       const apiError = err as { code?: string; reason?: string; message?: string };
       
-      let message = 'Failed to connect to Lace wallet.';
+      let message = 'Failed to connect to 1am wallet.';
       if (apiError.reason?.toLowerCase().includes('locked') || apiError.message?.toLowerCase().includes('locked')) {
-        message = 'Lace wallet is locked. Please open the extension and unlock it.';
+        message = '1am wallet is locked. Please open the extension and unlock it.';
       } else if (apiError.code === ErrorCodes.Rejected || apiError.code === ErrorCodes.PermissionRejected) {
-        message = 'Connection request was rejected in Lace.';
+        message = 'Connection request was rejected in 1am.';
       } else {
         message = apiError.reason || apiError.message || message;
       }
