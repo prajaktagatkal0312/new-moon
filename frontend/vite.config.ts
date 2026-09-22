@@ -58,7 +58,6 @@ export default defineConfig({
     plugins: () => [wasm()],
   },
   optimizeDeps: {
-    exclude: ['@midnight-ntwrk/compact-runtime'],
     include: ['object-inspect'],
   },
   build: {

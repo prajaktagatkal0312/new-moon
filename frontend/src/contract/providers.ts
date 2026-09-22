@@ -3,7 +3,7 @@ import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-pri
 import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-public-data-provider';
 import { dappConnectorProofProvider } from '@midnight-ntwrk/midnight-js-dapp-connector-proof-provider';
 import type { ConnectedAPI } from '@midnight-ntwrk/dapp-connector-api';
-import { Transaction, SignatureEnabled, Proof, Binding } from '@midnight-ntwrk/midnight-js-protocol/ledger';
+import { Transaction, SignatureEnabled, Proof, Binding, CostModel } from '@midnight-ntwrk/midnight-js-protocol/ledger';
 import type { WalletProvider, MidnightProvider } from '@midnight-ntwrk/midnight-js-types';
 import { parseCoinPublicKeyToHex, parseEncPublicKeyToHex } from '@midnight-ntwrk/midnight-js-utils';
 import { Buffer } from 'buffer';
@@ -49,7 +49,7 @@ export async function createMoonVowProviders(api: ConnectedAPI, unshieldedAddres
 
   const zkConfigProvider = new FetchZkConfigProvider(window.location.origin + '/moon-vow', window.fetch);
 
-  const { CostModel } = await import('@midnight-ntwrk/midnight-js-protocol/ledger');
+  // CostModel is now imported statically at the top of the file
   const proofProvider = await dappConnectorProofProvider(api as any, zkConfigProvider, CostModel.initialCostModel());
   
   const publicDataProvider = indexerPublicDataProvider(INDEXER_URL, INDEXER_WS_URL);
