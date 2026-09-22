@@ -9,7 +9,7 @@ export type MoonVowPrivateState = {
 };
 
 export const compiledContract = CompiledContract.make('moon-vow', MoonVow.Contract).pipe(
-  CompiledContract.withWitnesses((_context: any) => ({
+  CompiledContract.withWitnesses({
     goalTextHash: (context: any) => {
       const state = context.privateState;
       if (!state.goalTextHash) throw new Error('goalTextHash not found in private state');
@@ -20,7 +20,7 @@ export const compiledContract = CompiledContract.make('moon-vow', MoonVow.Contra
       if (!state.salt) throw new Error('salt not found in private state');
       return [context.privateState, state.salt];
     },
-  }))
+  })
 );
 
 export const ledger = MoonVow.ledger;
