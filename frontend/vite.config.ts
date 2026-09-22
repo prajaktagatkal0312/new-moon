@@ -44,6 +44,8 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
       '@contracts': path.resolve(__dirname, '../contracts'),
       'isomorphic-ws': path.resolve(__dirname, './src/mock-ws.js'),
+      'events': 'events',
+      'assert': 'assert',
     },
   },
   server: {
