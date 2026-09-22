@@ -66,6 +66,6 @@ jobs:
       - name: Run E2E Integration Check
         run: |
           docker compose up -d --wait
-          npm run deploy
+          npm run deploy -- --network undeployed
           npm run test:e2e
         timeout-minutes: 10
