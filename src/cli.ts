@@ -89,7 +89,7 @@ const witnessHandlers = {
 };
 
 const compiledContract = CompiledContract.make('moon-vow', MoonVow.Contract).pipe(
-  CompiledContract.withCustomWitnesses(witnessHandlers as any),
+  CompiledContract.withWitnesses(witnessHandlers as any),
   CompiledContract.withCompiledFileAssets(zkConfigPath),
 );
 

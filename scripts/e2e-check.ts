@@ -55,7 +55,10 @@ async function main() {
   if (!fs.existsSync(contractPath)) fail('Compiled contract missing — run `npm run compile`.');
   const MoonVow = await import(pathToFileURL(contractPath).href);
   const compiledContract = CompiledContract.make('moon-vow', MoonVow.Contract).pipe(
-    CompiledContract.withVacantWitnesses,
+    CompiledContract.withWitnesses({
+      goalTextHash: (ctx: any) => [ctx.privateState, new Uint8Array(32)],
+      salt: (ctx: any) => [ctx.privateState, new Uint8Array(32)],
+    }),
     CompiledContract.withCompiledFileAssets(zkConfigPath),
   );
 
