@@ -9,7 +9,7 @@ import * as compactRuntime from '@midnight-ntwrk/compact-runtime';
 import { parseCoinPublicKeyToHex, parseEncPublicKeyToHex } from '@midnight-ntwrk/midnight-js-utils';
 import { Buffer } from 'buffer';
 
-const INDEXER_URL = import.meta.env.VITE_MIDNIGHT_INDEXER_URL || 'https://indexer.preview.midnight.network/api/v4/graphql';
+const INDEXER_URL = import.meta.env.VITE_MIDNIGHT_INDEXER_URL || '/api/indexer-proxy';
 const INDEXER_WS_URL = import.meta.env.VITE_MIDNIGHT_INDEXER_WS_URL || 'wss://indexer.preview.midnight.network/api/v4/graphql/ws';
 
 class DAppConnectorWalletAndMidnightProvider implements WalletProvider, MidnightProvider {
