@@ -53,18 +53,7 @@ export async function createMoonVowProviders(api: ConnectedAPI, unshieldedAddres
   // CostModel is now imported statically at the top of the file
   const proofProvider = await dappConnectorProofProvider(api as any, zkConfigProvider, CostModel.initialCostModel());
   
-  const rawPublicDataProvider = indexerPublicDataProvider(INDEXER_URL, INDEXER_WS_URL);
-  const publicDataProvider = {
-    ...rawPublicDataProvider,
-    queryContractState: async (contractAddress: string) => {
-      const state = await rawPublicDataProvider.queryContractState(contractAddress);
-      if (state && typeof state.serialize === 'function') {
-        const rawBytes = state.serialize();
-        return (compactRuntime.ContractState as any).deserialize(rawBytes);
-      }
-      return state;
-    }
-  };
+  const publicDataProvider = indexerPublicDataProvider(INDEXER_URL, INDEXER_WS_URL);
 
   const privateStateProvider = levelPrivateStateProvider({
     privateStateStoreName: 'moon-vow-state',

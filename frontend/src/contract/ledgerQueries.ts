@@ -11,12 +11,7 @@ export async function queryLedgerState(contractAddress: string) {
     const onChainState = await provider.queryContractState(contractAddress);
     if (!onChainState) return null;
     
-    // Bypass Vite's dual-chunk prototype mismatch (where the indexer's ContractState prototype
-    // is physically separate from the generated contract's compact-runtime prototype):
-    const rawBytes = onChainState.serialize();
-    const correctState = compactRuntime.ContractState.deserialize(rawBytes);
-    
-    return ledger(correctState.data);
+    return ledger(onChainState.data);
   } catch (error) {
     console.error('Failed to query ledger state:', error);
     return null;

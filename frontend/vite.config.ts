@@ -43,6 +43,8 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
       '@contracts': path.resolve(__dirname, '../contracts'),
+      '@midnight-ntwrk/compact-runtime': path.resolve(__dirname, './node_modules/@midnight-ntwrk/compact-runtime'),
+      '@midnight-ntwrk/onchain-runtime-v3': path.resolve(__dirname, './node_modules/@midnight-ntwrk/onchain-runtime-v3'),
       'isomorphic-ws': path.resolve(__dirname, './src/mock-ws.js'),
       'events': 'events',
       'assert': 'assert',
