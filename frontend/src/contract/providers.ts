@@ -57,7 +57,8 @@ export async function createMoonVowProviders(api: ConnectedAPI, unshieldedAddres
 
   const privateStateProvider = levelPrivateStateProvider({
     privateStateStoreName: 'moon-vow-state',
-    accountId: unshieldedAddress
+    accountId: unshieldedAddress,
+    privateStoragePasswordProvider: async () => 'moonvow-super-secret-password-123456789'
   } as any);
 
   return {
