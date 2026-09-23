@@ -130,6 +130,40 @@ export function App() {
     }
   };
 
+  const [isDeploying, setIsDeploying] = useState(false);
+
+  const handleDeployContract = async () => {
+    try {
+      if (wallet.status !== 'CONNECTED' || !wallet.api) {
+        showToast('Connect your wallet to deploy.', 'error');
+        return;
+      }
+      setIsDeploying(true);
+      showToast('Deploying MoonVow to Preview Network... Please sign in Lace.', 'success');
+      
+      const { deployContract } = await import('@midnight-ntwrk/midnight-js-contracts');
+      const { compiledContract } = await import('./contract/moonVow');
+      const { createMoonVowProviders } = await import('./contract/providers');
+      
+      const providers = await createMoonVowProviders(wallet.api, wallet.address!, wallet.network!);
+      const deployed = await deployContract(providers as any, {
+        compiledContract: compiledContract as any,
+        args: [],
+        privateStateId: 'moonVowPrivateState',
+        initialPrivateState: {},
+      });
+      
+      const addr = deployed.deployTxData.public.contractAddress;
+      console.log("SUCCESSFULLY DEPLOYED TO:", addr);
+      showToast(`Deployed! Address: ${addr}. Check console and update your ENV variables!`, 'success');
+    } catch (err: any) {
+      console.error(err);
+      showToast(err?.message || 'Deploy failed.', 'error');
+    } finally {
+      setIsDeploying(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
       <Navbar
@@ -174,6 +208,13 @@ export function App() {
                 <p className="text-slate-300 text-sm lg:text-base leading-relaxed">
                   MoonVow lets you register personal goals without revealing them. Only a 256-bit cryptographic commitment hash touches the Midnight Network ledger. Your goal text and salt remain strictly on your device.
                 </p>
+                <button
+                  onClick={handleDeployContract}
+                  disabled={isDeploying || wallet.status !== 'CONNECTED'}
+                  className="mt-4 px-4 py-2 bg-red-600/80 hover:bg-red-500 rounded-lg text-xs font-bold text-white transition-all disabled:opacity-50"
+                >
+                  {isDeploying ? 'Deploying...' : '⚠️ EMERGENCY DEPLOY (Creates new contract)'}
+                </button>
               </div>
             </section>
 
