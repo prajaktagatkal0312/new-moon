@@ -25,13 +25,13 @@ class DAppConnectorWalletAndMidnightProvider implements WalletProvider, Midnight
   async balanceTx(tx: any, ttl?: Date): Promise<any> {
     const serializedTx = Buffer.from(tx.serialize()).toString('hex');
     const { tx: balancedHex } = await (this.api as any).balanceUnsealedTransaction(serializedTx);
-    const balancedBytes = Buffer.from(balancedHex, 'hex');
+    
     return (Transaction as any).deserialize(
-      balancedBytes,
+      balancedHex,
       SignatureEnabled ? (SignatureEnabled as any).instance : undefined,
       Proof ? (Proof as any).instance : undefined,
       Binding ? (Binding as any).instance : undefined
-    ) || (Transaction as any).deserialize(balancedBytes); 
+    ) || (Transaction as any).deserialize(balancedHex); 
   }
 
   async submitTx(tx: any): Promise<any> {
