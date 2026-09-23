@@ -48,7 +48,7 @@ export async function createMoonVowProviders(api: ConnectedAPI, unshieldedAddres
 
   const walletAndMidnightProvider = new DAppConnectorWalletAndMidnightProvider(api, coinPublicKeyHex, encryptionPublicKeyHex);
 
-  const zkConfigProvider = new FetchZkConfigProvider(window.location.origin + '/moon-vow', window.fetch);
+  const zkConfigProvider = new FetchZkConfigProvider(window.location.origin + '/moon-vow', window.fetch.bind(window));
 
   // CostModel is now imported statically at the top of the file
   const proofProvider = await dappConnectorProofProvider(api as any, zkConfigProvider, CostModel.initialCostModel());

@@ -50,12 +50,12 @@ class DAppConnectorWalletAndMidnightProvider implements WalletProvider, Midnight
 export async function createCredentialsProviders(api: ConnectedAPI, unshieldedAddress: string, networkId: string) {
   // Get keys from Lace
   const shieldedAddresses = await (api as any).getShieldedAddresses();
-  const coinPublicKeyHex = parseCoinPublicKeyToHex(shieldedAddresses.coinPublicKey, networkId as any);
-  const encryptionPublicKeyHex = parseEncPublicKeyToHex(shieldedAddresses.encryptionPublicKey, networkId as any);
+  const coinPublicKeyHex = parseCoinPublicKeyToHex(shieldedAddresses.shieldedCoinPublicKey, networkId as any);
+  const encryptionPublicKeyHex = parseEncPublicKeyToHex(shieldedAddresses.shieldedEncryptionPublicKey, networkId as any);
 
   const walletAndMidnightProvider = new DAppConnectorWalletAndMidnightProvider(api, coinPublicKeyHex, encryptionPublicKeyHex);
 
-  const zkConfigProvider = new FetchZkConfigProvider(window.location.origin + '/credentials', window.fetch);
+  const zkConfigProvider = new FetchZkConfigProvider(window.location.origin + '/credentials', window.fetch.bind(window));
 
   const { CostModel } = await import('@midnight-ntwrk/midnight-js-protocol/ledger');
   const proofProvider = await dappConnectorProofProvider(api as any, zkConfigProvider, CostModel.initialCostModel());
@@ -64,7 +64,8 @@ export async function createCredentialsProviders(api: ConnectedAPI, unshieldedAd
 
   const privateStateProvider = levelPrivateStateProvider({
     privateStateStoreName: 'credentials-state',
-    accountId: unshieldedAddress
+    accountId: unshieldedAddress,
+    privateStoragePasswordProvider: async () => 'moonvow-super-secret-password-123456789'
   } as any);
 
   return {
