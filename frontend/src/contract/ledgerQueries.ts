@@ -9,6 +9,10 @@ export async function queryLedgerState(contractAddress: string) {
     const provider = indexerPublicDataProvider(INDEXER_URL, INDEXER_WS_URL);
     const onChainState = await provider.queryContractState(contractAddress);
     if (!onChainState) return null;
+    console.log('[DEBUG] onChainState:', onChainState);
+    console.log('[DEBUG] onChainState.data:', onChainState.data);
+    console.log('[DEBUG] onChainState.data constructor:', onChainState.data?.constructor?.name);
+    console.log('[DEBUG] onChainState.data instanceof check target — compare against __compactRuntime.StateValue');
     return ledger(onChainState.data);
   } catch (error) {
     console.error('Failed to query ledger state:', error);
