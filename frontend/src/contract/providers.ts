@@ -5,6 +5,7 @@ import { dappConnectorProofProvider } from '@midnight-ntwrk/midnight-js-dapp-con
 import type { ConnectedAPI } from '@midnight-ntwrk/dapp-connector-api';
 import { Transaction, SignatureEnabled, Proof, Binding, CostModel } from '@midnight-ntwrk/midnight-js-protocol/ledger';
 import type { WalletProvider, MidnightProvider } from '@midnight-ntwrk/midnight-js-types';
+import * as compactRuntime from '@midnight-ntwrk/compact-runtime';
 import { parseCoinPublicKeyToHex, parseEncPublicKeyToHex } from '@midnight-ntwrk/midnight-js-utils';
 import { Buffer } from 'buffer';
 
@@ -52,7 +53,18 @@ export async function createMoonVowProviders(api: ConnectedAPI, unshieldedAddres
   // CostModel is now imported statically at the top of the file
   const proofProvider = await dappConnectorProofProvider(api as any, zkConfigProvider, CostModel.initialCostModel());
   
-  const publicDataProvider = indexerPublicDataProvider(INDEXER_URL, INDEXER_WS_URL);
+  const rawPublicDataProvider = indexerPublicDataProvider(INDEXER_URL, INDEXER_WS_URL);
+  const publicDataProvider = {
+    ...rawPublicDataProvider,
+    queryContractState: async (contractAddress: string) => {
+      const state = await rawPublicDataProvider.queryContractState(contractAddress);
+      if (state && typeof state.serialize === 'function') {
+        const rawBytes = state.serialize();
+        return (compactRuntime.ContractState as any).deserialize(rawBytes);
+      }
+      return state;
+    }
+  };
 
   const privateStateProvider = levelPrivateStateProvider({
     privateStateStoreName: 'moon-vow-state',
