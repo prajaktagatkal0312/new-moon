@@ -43,8 +43,8 @@ class DAppConnectorWalletAndMidnightProvider implements WalletProvider, Midnight
 
 export async function createMoonVowProviders(api: ConnectedAPI, unshieldedAddress: string, networkId: string) {
   const shieldedAddresses = await (api as any).getShieldedAddresses();
-  const coinPublicKeyHex = parseCoinPublicKeyToHex(shieldedAddresses.coinPublicKey, networkId as any);
-  const encryptionPublicKeyHex = parseEncPublicKeyToHex(shieldedAddresses.encryptionPublicKey, networkId as any);
+  const coinPublicKeyHex = parseCoinPublicKeyToHex(shieldedAddresses.shieldedCoinPublicKey, networkId as any);
+  const encryptionPublicKeyHex = parseEncPublicKeyToHex(shieldedAddresses.shieldedEncryptionPublicKey, networkId as any);
 
   const walletAndMidnightProvider = new DAppConnectorWalletAndMidnightProvider(api, coinPublicKeyHex, encryptionPublicKeyHex);
 
