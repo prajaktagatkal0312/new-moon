@@ -41,7 +41,10 @@ class DAppConnectorWalletAndMidnightProvider implements WalletProvider, Midnight
   }
 }
 
+import { setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
+
 export async function createMoonVowProviders(api: ConnectedAPI, unshieldedAddress: string, networkId: string) {
+  setNetworkId(networkId);
   const shieldedAddresses = await (api as any).getShieldedAddresses();
   const coinPublicKeyHex = parseCoinPublicKeyToHex(shieldedAddresses.shieldedCoinPublicKey, networkId as any);
   const encryptionPublicKeyHex = parseEncPublicKeyToHex(shieldedAddresses.shieldedEncryptionPublicKey, networkId as any);

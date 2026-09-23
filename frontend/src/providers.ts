@@ -47,7 +47,10 @@ class DAppConnectorWalletAndMidnightProvider implements WalletProvider, Midnight
   }
 }
 
+import { setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
+
 export async function createCredentialsProviders(api: ConnectedAPI, unshieldedAddress: string, networkId: string) {
+  setNetworkId(networkId);
   // Get keys from Lace
   const shieldedAddresses = await (api as any).getShieldedAddresses();
   const coinPublicKeyHex = parseCoinPublicKeyToHex(shieldedAddresses.shieldedCoinPublicKey, networkId as any);
