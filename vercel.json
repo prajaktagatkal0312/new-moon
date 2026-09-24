@@ -5,7 +5,7 @@
   "framework": null,
   "rewrites": [
     {
-      "source": "/api/graphql-proxy",
+      "source": "/graphql-proxy",
       "destination": "https://indexer.preview.midnight.network/api/v4/graphql"
     }
   ]

@@ -3,7 +3,7 @@ import * as compactRuntime from '@midnight-ntwrk/compact-runtime';
 import { setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import { ledger } from './moonVow';
 
-const INDEXER_URL_RAW = import.meta.env.VITE_MIDNIGHT_INDEXER_URL || '/api/graphql-proxy';
+const INDEXER_URL_RAW = import.meta.env.VITE_MIDNIGHT_INDEXER_URL || '/graphql-proxy';
 const INDEXER_URL = INDEXER_URL_RAW.startsWith('/') ? window.location.origin + INDEXER_URL_RAW : INDEXER_URL_RAW;
 const INDEXER_WS_URL = import.meta.env.VITE_MIDNIGHT_INDEXER_WS_URL || 'wss://indexer.preview.midnight.network/api/v4/graphql/ws';
 
