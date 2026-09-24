@@ -85,5 +85,3 @@ frontend/test-render.js
 test-preview.mjs
 fetch-graphql.mjs
 patch*.cjs
-.vercel
-.env*

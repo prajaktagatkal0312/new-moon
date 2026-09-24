@@ -2,11 +2,5 @@
   "installCommand": "npm install && cd .. && npm install && cd frontend",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "framework": null,
-  "rewrites": [
-    {
-      "source": "/graphql-proxy",
-      "destination": "https://indexer.preview.midnight.network/api/v4/graphql"
-    }
-  ]
+  "framework": null
 }

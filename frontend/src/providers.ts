@@ -9,9 +9,8 @@ import { WalletProvider, MidnightProvider } from '@midnight-ntwrk/midnight-js-ty
 import { parseCoinPublicKeyToHex, parseEncPublicKeyToHex } from '@midnight-ntwrk/midnight-js-utils';
 import { Buffer } from 'buffer';
 
-const INDEXER_URL_RAW = '/graphql-proxy';
-const INDEXER_URL = INDEXER_URL_RAW.startsWith('/') ? window.location.origin + INDEXER_URL_RAW : INDEXER_URL_RAW;
-const INDEXER_WS_URL = 'wss://indexer.preview.midnight.network/api/v4/graphql/ws';
+const INDEXER_URL = 'wss://indexer.preview.midnight.network/api/v1/graphql';
+const INDEXER_WS_URL = 'wss://indexer.preview.midnight.network/api/v1/graphql/ws';
 
 class DAppConnectorWalletAndMidnightProvider implements WalletProvider, MidnightProvider {
   constructor(
